@@ -1,0 +1,14 @@
+{
+    "editor.tabSize": 2,
+    "files.exclude": {
+        "build/": true
+    },
+    "files.associations": {
+        "*.metal": "c",
+        "*.h": "c",
+        "condition_variable": "c",
+        "ctime": "c",
+        "mutex": "c",
+        "limits": "c"
+    }
+}

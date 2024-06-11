@@ -1,0 +1,90 @@
+#include "driver/gpio.h"
+#include "soc/gpio_num.h"
+
+// 0 - breadboard
+// 1 - rev1 PCB
+// 2 - rev2 PCB
+
+#define DISPLAY_TYPE_EINK 1
+#define DISPLAY_TYPE_SHARP 2
+
+#ifndef BOARD_TARGET
+// Need this until VSCode define settings work
+#define BOARD_TARGET 2
+#endif
+
+//
+// SPI + Display
+//
+
+#if BOARD_TARGET == 0
+#define DISPLAY_TYPE DISPLAY_TYPE_SHARP
+#else
+#define DISPLAY_TYPE DISPLAY_TYPE_EINK
+#endif
+
+#if BOARD_TARGET >= 2
+#define DISPLAY_ROTATION -90
+#elif BOARD_TARGET == 1
+#define DISPLAY_ROTATION 90
+#else
+#define DISPLAY_ROTATION 0
+#endif
+
+#if BOARD_TARGET >= 2
+
+#define PIN_NUM_SPI_MOSI GPIO_NUM_1
+#define PIN_NUM_SPI_MISO GPIO_NUM_2
+#define PIN_NUM_SPI_CLK GPIO_NUM_6
+#define PIN_NUM_SPI_CS_DISP GPIO_NUM_10
+#define PIN_NUM_DISP_BUSY GPIO_NUM_4
+#define PIN_NUM_DISP_RST GPIO_NUM_5
+#define PIN_NUM_DISP_DC GPIO_NUM_7
+
+#define PIN_NUM_SPI_CS_BMV GPIO_NUM_10
+#define PIN_NUM_SPI_BMV_IRQ1 GPIO_NUM_12
+#define PIN_NUM_SPI_BMV_IRQ2 GPIO_NUM_13
+
+#elif BOARD_TARGET == 1
+
+#define PIN_NUM_SPI_MOSI GPIO_NUM_7
+#define PIN_NUM_SPI_CLK GPIO_NUM_6
+#define PIN_NUM_SPI_CS_DISP GPIO_NUM_18
+#define PIN_NUM_DISP_BUSY GPIO_NUM_0
+#define PIN_NUM_DISP_RST GPIO_NUM_1
+#define PIN_NUM_DISP_DC GPIO_NUM_19
+
+#elif BOARD_TARGET == 0
+
+#define PIN_NUM_SPI_MOSI GPIO_NUM_7
+#define PIN_NUM_SPI_CLK GPIO_NUM_8
+#define PIN_NUM_SPI_CS_DISP GPIO_NUM_44
+
+#endif
+
+//
+// I2C
+//
+#if BOARD_TARGET == 2
+#define PIN_NUM_I2C_SDA GPIO_NUM_8
+#define PIN_NUM_I2C_SCL GPIO_NUM_9
+#elif BOARD_TARGET == 1
+#define PIN_NUM_I2C_SDA GPIO_NUM_4
+#define PIN_NUM_I2C_SCL GPIO_NUM_5
+#elif BOARD_TARGET == 0
+#define PIN_NUM_I2C_SDA GPIO_NUM_43
+#define PIN_NUM_I2C_SCL GPIO_NUM_6
+#endif
+
+#if BOARD_TARGET == 0
+#define I2C_REQUIRES_PULLUP 1
+#else
+#define I2C_REQUIRES_PULLUP 0
+#endif
+
+//
+// User LED
+//
+#if BOARD_TARGET == 0
+#define PIN_NUM_BLINK GPIO_NUM_21
+#endif

@@ -1,0 +1,29 @@
+{
+  "env": {
+    "esp-version": "esp-13.2.0_20230928"
+  },
+  "configurations": [
+    {
+      "name": "esp32s3",
+      "compilerPath": "${HOME}/.espressif/tools/xtensa-esp-elf/${esp-version}/xtensa-esp-elf/bin/xtensa-esp-elf-gcc",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+      "includePath": [
+        "${HOME}/.espressif/tools/xtensa-esp-elf/${esp-version}/xtensa-esp-elf/xtensa-esp-elf/include/**",
+        "${HOME}/code/esp-idf/components/**",
+        "${workspaceFolder}/**"
+      ],
+      "browse": {
+        "path": [
+          "${HOME}/.espressif/tools/xtensa-esp-elf/${esp-version}/xtensa-esp-elf/xtensa-esp-elf/include/**",
+          "${HOME}/code/esp-idf/components/**",
+          "${workspaceFolder}/**"
+        ],
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "defines": [
+        "BOARD_TARGET=2"
+      ]
+    }
+  ],
+  "version": 4
+}

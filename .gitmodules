@@ -1,0 +1,3 @@
+[submodule "bitclock-fw/components/lvgl"]
+	path = bitclock-fw/components/lvgl
+	url = https://github.com/lvgl/lvgl.git

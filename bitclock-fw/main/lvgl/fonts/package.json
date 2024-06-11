@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "lv_font_conv": "github:lvgl/lv_font_conv"
+  }
+}

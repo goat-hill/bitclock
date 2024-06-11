@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# esp32
+build/
+managed_components/
+sdkconfig.bak
+sdkconfig.old
+
+# python
+venv/
+
+# node
+node_modules/
+
+# temporarily omit PCB rev2
+bitclock-pcb/rev2/

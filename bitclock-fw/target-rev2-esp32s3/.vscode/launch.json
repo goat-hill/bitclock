@@ -1,0 +1,34 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "esp-openocd",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bitclock.elf",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/Users/bradylaw/.espressif/tools/xtensa-esp-elf-gdb/12.1_20231023/xtensa-esp-elf-gdb/bin/xtensa-esp32s3-elf-gdb",
+      "cwd": "${workspaceFolder}",
+      "setupCommands": [
+        {
+          "text": "target extended-remote :3333"
+        },
+        {
+          "text": "set remote hardware-watchpoint-limit 2"
+        },
+        {
+          "text": "mon reset halt"
+        },
+        {
+          "text": "maintenance flush register-cache"
+        },
+        {
+          "text": "thb app_main"
+        }
+      ]
+    }
+  ]
+}

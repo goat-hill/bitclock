@@ -1,0 +1,40 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+        args: ['--maxkb=2048']
+-   repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v18.1.5
+    hooks:
+    -   id: clang-format
+        files: '(target|main)/.*'
+-   repo: local
+    hooks:
+    -   id: eslint
+        name: eslint
+        entry: bash -c 'cd bitclock-web/ && npx eslint --fix .'
+        language: system
+        types_or: [ts, tsx]
+        pass_filenames: false
+-   repo: local
+    hooks:
+    -   id: prettier
+        name: prettier
+        entry: bash -c 'cd bitclock-web/ && npx prettier --write --check .'
+        language: system
+        types_or: [ts, tsx]
+        pass_filenames: false
+-   repo: local
+    hooks:
+    -   id: typescript-check
+        name: typescript-check
+        entry: bash -c 'cd bitclock-web/ && npx tsc'
+        language: system
+        types_or: [ts, tsx]
+        pass_filenames: false
