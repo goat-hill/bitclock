@@ -7,6 +7,8 @@ https://bitclock.io
 
 <img src="https://github.com/goat-hill/bitclock/assets/220799/4416cb05-0625-438e-961c-3917e9b5334f" width="500" alt="Device photo" />
 
+Visit https://bitclock.io/connect to configure your existing device
+
 ## Firmware
 
 Source code for ESP32 using the ESP-IDF development framework.
