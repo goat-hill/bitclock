@@ -27,6 +27,9 @@ OnShape design, STEP files, and instructions for 3D printing.
 
 See [bitclock-enclosure/](bitclock-enclosure/)
 
+<img src="https://github.com/goat-hill/bitclock/assets/220799/b83af06f-92e7-4f3a-9e44-477fad33d226" width="500" alt="Device CAD screenshot" />
+
+
 ## PCB
 
 KiCad schematic, board, and JLCPCB ordering files.
