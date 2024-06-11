@@ -9,13 +9,6 @@ git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
 ./install.fish esp32s3
 ```
 
-## Pre-commit linting
-
-```fish
-brew install pre-commit
-pre-commit install
-```
-
 ## Entering environment
 
 ```fish
