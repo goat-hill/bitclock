@@ -2,23 +2,41 @@
 
 ## Bootstrap
 
+### One-time esp-idf setup
+
+[esp-idf](https://github.com/espressif/esp-idf) (the ESP32 development framework) needs to be installed separately before building the firmware.
+
 ```fish
 brew install cmake ninja dfu-util python@3.12
 brew reinstall openssl
 git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
 ./install.fish esp32s3
+source export.fish
 ```
 
-## Entering environment
+### Entering esp-idf environment
 
 ```fish
-source ~/code/esp-idf/export.fish
+source ~/path-to-esp-idf/export.fish
+```
+
+## Target directories
+
+In order to maintain older PCB revision targets, we have separate directories for each PCB revision. Despite most files being shared across targets (via symlinks) we do this because esp-idf doesn't handle multiple targets well. This gives each target it's own build configuration and directory.
+
+```fish
+cd target-rev2-esp32s3/
+```
+
+To avoid confusing your code editor with duplicate files across targets, it is recommended to open VSCode with a single target as the root directory.
+
+```fish
+code .
 ```
 
 ## Build
 
 ```fish
-cd target-rev2-esp32s3/
 idf.py build
 ```
 
