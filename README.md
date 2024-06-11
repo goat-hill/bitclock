@@ -30,3 +30,15 @@ See [bitclock-enclosure/](bitclock-enclosure/)
 KiCad schematic, board, and JLCPCB ordering files.
 
 See [bitclock-pcb/](bitclock-pcb/)
+
+
+# Contributing
+
+## Pre-commit linting
+
+A single pre-commit config is created for this monorepo. Set up the hooks to get linting on every commit.
+
+```fish
+brew install pre-commit
+pre-commit install
+```
