@@ -2,6 +2,7 @@
 
 # bitclock
 Open source e-ink clock
+https://bitclock.io
 
 ## Firmware
 
@@ -11,7 +12,7 @@ See [bitclock-fw/](bitclock-fw/)
 
 ## Website
 
-Next.js web app for homepage and device configurator.
+Next.js web app for [homepage](https://bitclock.io) and [device configurator](https://bitclock.io/connect).
 
 See [bitclock-web/](bitclock-web/)
 
