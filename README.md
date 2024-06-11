@@ -19,6 +19,8 @@ Next.js web app for [homepage](https://bitclock.io) and [device configurator](ht
 
 See [bitclock-web/](bitclock-web/)
 
+<img src="https://github.com/goat-hill/bitclock/assets/220799/9b72ab4b-d259-4e13-9049-c8f1ba85664d" width="500" alt="Web configurator screenshot" />
+
 ## Enclosure
 
 OnShape design, STEP files, and instructions for 3D printing.
