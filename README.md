@@ -1,6 +1,7 @@
-# bitclock
+<img src="https://github.com/goat-hill/bitclock/assets/220799/5121ca8b-19c7-4db0-9a81-38fae36ac5df" width="250" alt="bitclock" />
 
-Open source e-ink clock.
+# bitclock
+Open source e-ink clock
 
 ## Firmware
 
