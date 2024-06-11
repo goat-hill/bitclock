@@ -29,13 +29,13 @@ See [bitclock-enclosure/](bitclock-enclosure/)
 
 <img src="https://github.com/goat-hill/bitclock/assets/220799/b83af06f-92e7-4f3a-9e44-477fad33d226" width="500" alt="Device CAD screenshot" />
 
-
 ## PCB
 
 KiCad schematic, board, and JLCPCB ordering files.
 
 See [bitclock-pcb/](bitclock-pcb/)
 
+<img src="https://github.com/goat-hill/bitclock/assets/220799/4e667f21-f8f4-497b-bb93-be5a299950ad" width="500" alt="KiCAD device PCB screenshot" />
 
 # Contributing
 
