@@ -1,7 +1,7 @@
 <img src="https://github.com/goat-hill/bitclock/assets/220799/5121ca8b-19c7-4db0-9a81-38fae36ac5df" width="250" alt="bitclock" />
 
 # bitclock
-Open source e-ink clock
+Open source e-ink desk companion, clock, and air quality monitor.
 
 https://bitclock.io
 
