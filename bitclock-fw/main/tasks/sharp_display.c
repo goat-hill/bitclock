@@ -7,9 +7,12 @@
 #include "esp_log.h"
 #include "lvgl/lv_helper.h"
 #include "lvgl/lvgl.h"
+#include "lvgl/views/aqi_grid.h"
 #include "scd4x.h"
 #include "sgp4x.h"
 #include "sht4x.h"
+
+LV_FONT_DECLARE(sharp_display_font);
 
 StaticTask_t dispTaskBuffer;
 StackType_t dispTaskStack[DISP_STACK_SIZE];
@@ -219,26 +222,26 @@ void disp_task_run(void *pvParameters) {
   lv_log_register_print_cb(disp_log);
   lv_tick_set_cb(lv_tick_cb);
 
-  lv_theme_t *theme = lv_theme_mono_init(display, false, &sublabel);
+  lv_theme_t *theme = lv_theme_mono_init(display, false, &sharp_display_font);
   lv_display_set_theme(display, theme);
 
   disp_all_clear();
 
-  static LVHelperHomeData homeData = {};
-  time_t now;
-  lv_helper_home_init();
+  lv_helper_styles_init();
+
+   lv_helper_set_view_mode(VIEW_MODE_AQI_GRID);
 
   while (1) {
-    homeData.temp_celsius = sht4x_current_temp_celsius();
-    homeData.co2_ppm = scd4x_current_co2_ppm();
-    homeData.voc_index = sgp4x_current_voc_index();
-    homeData.nox_index = sgp41_current_nox_index();
+    lv_helper_view_mode_aqi_data.temp_celsius = sht4x_current_temp_celsius();
+    lv_helper_view_mode_aqi_data.humidity_pct = sht4x_current_relative_humidity();
+    lv_helper_view_mode_aqi_data.co2_ppm = scd4x_current_co2_ppm();
+    lv_helper_view_mode_aqi_data.voc_index = sgp4x_current_voc_index();
+    lv_helper_view_mode_aqi_data.nox_index = sgp41_current_nox_index();
 
-    time(&now);
-    lv_helper_home_update(&homeData);
+    lv_helper_update();
 
     uint32_t ms_til_next = lv_timer_handler();
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(ms_til_next);
     check_for_frame_inversion();
     disp_empty_update();
   }

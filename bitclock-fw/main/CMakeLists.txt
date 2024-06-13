@@ -12,6 +12,7 @@ idf_component_register(
     "libs/weather_api.c"
     "lvgl/fonts/large_number.c"
     "lvgl/fonts/medium_number.c"
+    "lvgl/fonts/sharp_display_font.c"
     "lvgl/fonts/small_number.c"
     "lvgl/fonts/sublabel.c"
     "lvgl/img/logo.c"
