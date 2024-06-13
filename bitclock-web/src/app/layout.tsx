@@ -10,6 +10,7 @@ import {
   createTheme,
   Box,
   Anchor,
+  Text,
 } from "@mantine/core";
 import Link from "next/link";
 import { Overpass } from "next/font/google";
@@ -51,8 +52,7 @@ export default function RootLayout({
       >
         <MantineProvider theme={theme}>
           {children}
-          <Box mt="md" mb="xl">
-            <Center>
+          <Text ta="center" my="xl">
               © {currentDate.getFullYear()} Goat Hill Electronics LLC. All
               rights reserved.&nbsp;
               <Anchor component={Link} href="/privacy">
@@ -62,8 +62,7 @@ export default function RootLayout({
               <Anchor component={Link} href="/terms">
                 Terms of Service
               </Anchor>
-            </Center>
-          </Box>
+              </Text>
         </MantineProvider>
         <Analytics />
       </body>

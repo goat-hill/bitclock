@@ -14,6 +14,7 @@ import ClimateBlock from "./climate-block";
 import ClockBlock from "./clock-block";
 import AqiBlock from "./aqi-block";
 import AppSelectionBlock from "./app-selection-block";
+import { IconBluetooth } from "@tabler/icons-react";
 
 type GattAttributeParser<T> = {
   attributeId: number | string;
@@ -205,6 +206,7 @@ export default function Home() {
             onClick={connectToDevice}
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan", deg: 217 }}
+            leftSection={<IconBluetooth size={20} />}
           >
             Connect to device
           </Button>
