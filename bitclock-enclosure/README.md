@@ -2,7 +2,7 @@
 
 ## CAD design
 
-[OnShape design v5](https://cad.onshape.com/documents/f4d7ba303b59b71b8201b0bf/v/e6ee481dddfc47d3fd80f32c/e/d0fdc989a686ce42a3170916)
+[OnShape design v6.2](https://cad.onshape.com/documents/f4d7ba303b59b71b8201b0bf/v/8381e401aa08874d26e5d90c/e/d0fdc989a686ce42a3170916)
 
 The 3D printed enclosure STL files can be exported from the "Back plastic" and "Front plastic" parts.
 
