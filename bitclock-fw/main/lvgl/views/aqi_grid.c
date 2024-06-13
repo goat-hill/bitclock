@@ -78,7 +78,7 @@ void lv_helper_aqi_grid_update(lv_helper_view_mode_aqi_data_t *data) {
 
   static char co2_str[10];
   snprintf(co2_str, sizeof(co2_str), "%" PRIu16,
-           round_to_nearest_50(data->co2_ppm));
+           data->co2_ppm);
   set_text_if_changed(co2_label, co2_str);
 
   static char voc_str[10];
