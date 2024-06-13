@@ -20,7 +20,7 @@ export default function Home() {
           <Text ta="center">Shipping <strong>July 2024</strong>. Join mailing list to stay updated!</Text>
           <Box w={{ base: '100%', xs: 480, md: 600 }}>
           <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd2UAob-NJfPU_3VcjZiAaslMEGd6qegJ8XPgLOtxQYYuO0Aw/viewform?embedded=true"
-            width="640" height="1300" frameBorder={0} marginHeight={0} marginWidth={0}>Loading…</iframe>
+            width="100%" height="1300" frameBorder={0} marginHeight={0} marginWidth={0}>Loading…</iframe>
           </Box>
           
         </Flex>
