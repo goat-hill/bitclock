@@ -3,8 +3,8 @@
 #include "libs/sensor_utils.h"
 #include "lvgl/lvgl.h"
 #include "lvgl/utils.h"
-#include <math.h>
 #include "tasks/tasks.h"
+#include <math.h>
 
 #ifdef DISPLAY_TYPE
 #if DISPLAY_TYPE == DISPLAY_TYPE_SHARP
@@ -52,9 +52,12 @@ void lv_helper_aqi_grid_create() {
 
   // Create labels and value labels for each parameter
   create_label(screen, "Temp", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 0);
-  create_label(screen, "Humidity", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 1);
-  create_label(screen, "CO₂ ppm", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 2);
-  create_label(screen, "VOC index", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 3);
+  create_label(screen, "Humidity", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
+               1);
+  create_label(screen, "CO₂ ppm", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
+               2);
+  create_label(screen, "VOC index", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
+               3);
 
   temperature_label =
       create_label(screen, "", LV_TEXT_ALIGN_RIGHT, LV_GRID_ALIGN_END, 1, 0);
@@ -77,8 +80,7 @@ void lv_helper_aqi_grid_update(lv_helper_view_mode_aqi_data_t *data) {
   set_text_if_changed(humidity_label, humidity_str);
 
   static char co2_str[10];
-  snprintf(co2_str, sizeof(co2_str), "%" PRIu16,
-           data->co2_ppm);
+  snprintf(co2_str, sizeof(co2_str), "%" PRIu16, data->co2_ppm);
   set_text_if_changed(co2_label, co2_str);
 
   static char voc_str[10];

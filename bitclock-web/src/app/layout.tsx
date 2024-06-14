@@ -53,16 +53,16 @@ export default function RootLayout({
         <MantineProvider theme={theme}>
           {children}
           <Text ta="center" my="xl">
-              © {currentDate.getFullYear()} Goat Hill Electronics LLC. All
-              rights reserved.&nbsp;
-              <Anchor component={Link} href="/privacy">
-                Privacy Policy
-              </Anchor>
-              &nbsp;𐤟&nbsp;
-              <Anchor component={Link} href="/terms">
-                Terms of Service
-              </Anchor>
-              </Text>
+            © {currentDate.getFullYear()} Goat Hill Electronics LLC. All rights
+            reserved.&nbsp;
+            <Anchor component={Link} href="/privacy">
+              Privacy Policy
+            </Anchor>
+            &nbsp;𐤟&nbsp;
+            <Anchor component={Link} href="/terms">
+              Terms of Service
+            </Anchor>
+          </Text>
         </MantineProvider>
         <Analytics />
       </body>
