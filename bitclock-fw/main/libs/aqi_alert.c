@@ -20,7 +20,7 @@ aqi_alert_reason_t aqi_alerts_check(aqi_data_t *aqi_data) {
   if (aqi_data->nox_index >= 150) {
     return AQI_ALERT_NOX_HIGH;
   }
-  if (aqi_data->voc_index >= 250) {
+  if (aqi_data->voc_index >= 325) {
     return AQI_ALERT_VOC_HIGH;
   }
   if (aqi_data->co2_ppm >= 1000) {
@@ -31,7 +31,7 @@ aqi_alert_reason_t aqi_alerts_check(aqi_data_t *aqi_data) {
   if (aqi_data->nox_index >= 20) {
     return AQI_ALERT_NOX_HIGH;
   }
-  if (aqi_data->voc_index >= 150) {
+  if (aqi_data->voc_index >= 250) {
     return AQI_ALERT_VOC_HIGH;
   }
   if (aqi_data->co2_ppm >= 700) {
