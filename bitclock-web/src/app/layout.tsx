@@ -13,6 +13,7 @@ import {
   Text,
 } from "@mantine/core";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Overpass } from "next/font/google";
 
 const overpass = Overpass({
@@ -21,9 +22,22 @@ const overpass = Overpass({
   display: "swap",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Bitclock",
-  description: "Desk companion",
+  description:
+    "An open source e-ink desk companion, clock, and air quality monitor.",
+  keywords: [
+    "bitclock",
+    "e-ink",
+    "desk",
+    "companion",
+    "clock",
+    "air",
+    "quality",
+    "monitor",
+    "esp32",
+  ],
+  robots: "index, follow",
 };
 
 const theme = createTheme({
