@@ -1,7 +1,15 @@
 "use client";
 
 import React from "react";
-import { Badge, Box, Button, Container, Divider, Group } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Button,
+  Paper,
+  Container,
+  Divider,
+  Group,
+} from "@mantine/core";
 import { tzmap } from "@/libs/tz";
 import { useState } from "react";
 import Logo from "../logo";
@@ -212,7 +220,17 @@ export default function Home() {
           </Button>
         )}
       </Group>
-      {bluetoothConnection && (
+      {!bluetoothConnection ? (
+        <Box ta="center" mt="xl">
+          <Paper shadow="xs" p="md" maw={600} ml="auto" mr="auto">
+            <p>
+              Make sure Bitclock is powered (via USB) and within Bluetooth
+              range.
+            </p>
+            <p>Google Chrome for macOS/Windows required for Web Bluetooth.</p>
+          </Paper>
+        </Box>
+      ) : (
         <Box pt="md">
           <AqiBlock
             temperature={temperature}

@@ -1,0 +1,14 @@
+namespace NodeJS {
+  interface ProcessEnv {
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: string;
+    STRIPE_SECRET_KEY: string;
+    NEXT_PUBLIC_DOMAIN: string;
+    STRIPE_BITCLOCK_WHITE_PRICE: string;
+    STRIPE_BITCLOCK_BLACK_PRICE: string;
+    STRIPE_BITCLOCK_PCB_PRICE: string;
+    STRIPE_BITCLOCK_SHIPPING_ID: string;
+    STRIPE_CA_TAX_RATE: string;
+    NEXT_PUBLIC_VERCEL_URL: string;
+    STRIPE_CALLBACK_SCHEME: string;
+  }
+}

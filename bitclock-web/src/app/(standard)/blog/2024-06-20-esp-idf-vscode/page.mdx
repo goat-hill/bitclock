@@ -1,0 +1,286 @@
+import NextImage from "next/image";
+import { Image } from "@mantine/core";
+import BannerImage from "./banner.png";
+import { Box, Paper, Title } from "@mantine/core";
+import InlineVideo from "@/app/(standard)/blog/inline-video";
+import BitclockImage from "./banner.png";
+
+export const metadata = {
+  // author: "Brady Law",
+  // date: "2024-06-20",
+  title: "ESP32 development with ESP-IDF & VSCode",
+  description: "Tips for projects that outgrow the Arduino SDK",
+  // bannerImage: BannerImage,
+  // tags: ["esp32", "esp-idf", "fimrware"]
+};
+
+{
+// TODO:
+// - Banner image
+// - Facebook/Twitter share metadata
+// - Post author, date, tags to page
+// - Share buttons, Follow on X buttons
+// - Code block filenames
+// - Static analysis + code completion explanation
+// - Interactive debugging explanation
+// - Add Bitclock image somwehere
+// - Blog navigation and list
+}
+
+<Title order={1} mt="xl">
+  {metadata.title}
+</Title>
+<Title order={4} mt="sm" c="dimmed">
+  {metadata.description}
+</Title>
+
+<Image
+  component={NextImage}
+  src={BitclockImage}
+  w="100%"
+  width={928}
+  h="auto"
+  alt="Bitclock photo"
+  radius="md"
+  fit="contain"
+  mt="md"
+/>
+
+<Paper shadow="xs" px="md" py="xs" mt="xl">
+Hobbyist electronics projects are increasingly turning to the ESP32 SoC (System-on-a-Chip) to control their devices. [Bitclock](https://github.com/goat-hill/bitclock) is no exception, and features an [ESP32-S3-WROOM-1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-WROOM-1-N8/15200089) module mounted to the board.
+
+These modules are popular for a number of reasons:
+
+- **Simplicity**: Built-in Wi-Fi, Bluetooth, and flash on a single module
+- **Low price**: Modules for [~$1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-C3-MINI-1-N4/13877574), dev boards for [~$10](https://www.amazon.com/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF/)
+- **SDK**: Extensive development framework and high quality [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html)
+- **Low power consumption**: Can operate in the 10s of mA or sleep in µA
+- **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others so it's easier to sell
+
+### Outgrowing the Arduino SDK
+
+Most ESP32 tutorials begin with installing the Arduino IDE. It's popular because it only takes a few steps to get a running "Hello World" or blinking LED. The IDE automatically downloads an ESP32 SDK and has a simple but comprehensive interface for getting started.
+
+However, more complex ESP32 projects can quickly overwhelm the constraints of single Arduino sketch file. The Arduino IDE + SDK is efficient for bootstrapping projects but is **not the best fit for more advanced ESP32 projects.**
+
+When exploring development environments for Bitclock, I had a few objectives:
+
+#### 1. Remove unnecessary abstractions
+
+When using the Arduino IDE, you are tied to using the [arduino-esp32](https://github.com/espressif/arduino-esp32) SDK and the Arduino [programming language](https://www.arduino.cc/reference/en/).
+
+The [arduino-esp32](https://github.com/espressif/arduino-esp32) SDK is an abstraction on top of the ESP32-specific [ESP-IDF](https://github.com/espressif/esp-idf) SDK. While there are some advantages to using an abstract Arduino SDK that can port to non-ESP32 board types, complex applications will benefit from using the [ESP-IDF](https://github.com/espressif/esp-idf) framework directly and optimizing for the hardware selceted for the project.
+
+The ESP-IDF framework is packed with features and is extremely well documented. Some features [Bitclock](https://github.com/goat-hill/bitclock) leverages include:
+
+- [freertos](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos.html) - Multi-threading and better display performance
+- [ota](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ota.html) - OTA firmware updates via Wi-Fi or bluetooth
+- [partitions](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html) - For custom layouts of flash memory
+- [bt](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/index.html) - Bluetooth + BLE applications
+
+By using a generic IDE instead of Arduino, we can start using the ESP-IDF SDK instead.
+
+#### 2. Use a popular IDE
+
+VSCode is already a popular choice for backend, web, and embedded software development. It has strong IDE support for development in C and C++. It is free, extremely performant, and the backing of Microsoft to keep it working well. It also integrates with Github Copilot which can [speed up certain development tasks](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/).
+
+And last but not least, it makes it easy for your project to have more than one source file! 😀
+
+Before switching to using ESP-IDF + VSCode environment, I wanted to validate that the following developer features would still be available:
+
+1. **Simple build + run + monitor**
+2. **Static analysis + code completion**
+3. **Interactive debugging**
+
+In the sections below, I'll show how this functionality is preserved.
+
+#### \* - A note on PlatformIO
+
+[PlatformIO](https://platformio.org/) is a popular project for ESP32 development within VSCode.
+
+I first evaluated using that, but I did not find that it met the first requirement of _Minimize abstractions_. The VSCode extension it requires adds a lot of visual and functional bloat to the VSCode editor that I found unnecessary through the setup described later in this post.
+
+### ESP-IDF toolchain setup
+
+To start a project with ESP-IDF, you'll first need to install the ESP-IDF toolchain. Follow the [instructions on the Espressif website here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/linux-macos-setup.html).
+
+On macOS, you'll need create a directory to install the SDK to and the process goes something like this:
+
+```sh
+brew install cmake ninja dfu-util python@3.12 openssl
+git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
+./install.fish esp32s3
+source export.sh
+```
+
+Make sure to select the latest release version of ESP-IDF, the board you are using in place of `esp32s3` and read their docs for the latest instructions.
+
+### Basic project setup
+
+Create a separate new directory to house your project source code.
+
+See the [ESP-IDF Hello World](https://github.com/espressif/esp-idf/tree/v5.2.2/examples/get-started/hello_world) example for the basic project setup.
+
+The file structure will start with the following:
+
+```text
+├── CMakeLists.txt
+├── pytest_hello_world.py      Python script used for automated testing
+├── main
+│   ├── CMakeLists.txt
+│   └── hello_world_main.c
+```
+
+Once your project is created, and the ESP-IDF environment is active via `source ~/esp-idf/export.sh`, build and run is a simple via the CLI:
+
+- `idf.py build`
+- `idf.py flash`
+- `idf.py monitor`
+
+The [Hello World example](https://github.com/espressif/esp-idf/tree/v5.2.2/examples/get-started/hello_world) does a good job of giving the basics of how an ESP-IDF project is organized, so this post will focus on other topics.
+
+### Static analysis + code completion
+
+<InlineVideo
+  src="/videos/vscode-completion.mp4"
+  autoplay
+  loop
+  label="Auto-completion from ESP-IDF SDK"
+/>
+
+```json
+{
+  "env": {
+    "esp-version": "esp-13.2.0_20230928"
+  },
+  "configurations": [
+    {
+      "name": "esp32s3",
+      "compilerPath": "${HOME}/.espressif/tools/xtensa-esp-elf/${esp-version}/xtensa-esp-elf/bin/xtensa-esp-elf-gcc",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+      "includePath": [
+        "${HOME}/.espressif/tools/xtensa-esp-elf/${esp-version}/xtensa-esp-elf/xtensa-esp-elf/include/**",
+        "${HOME}/code/esp-idf/components/**",
+        "${workspaceFolder}/**"
+      ],
+      "browse": {
+        "path": [
+          "${HOME}/.espressif/tools/xtensa-esp-elf/${esp-version}/xtensa-esp-elf/xtensa-esp-elf/include/**",
+          "${HOME}/code/esp-idf/components/**",
+          "${workspaceFolder}/**"
+        ],
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "defines": ["BOARD_TARGET=2"]
+    }
+  ],
+  "version": 4
+}
+```
+
+### Interactive debugging
+
+<InlineVideo
+  src="/videos/vscode-debug.mp4"
+  autoplay
+  loop
+  label="GDB interactive debugging using OpenOCD"
+/>
+
+```sh
+idf.py openocd
+```
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "esp-openocd",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bitclock.elf",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/Users/bradylaw/.espressif/tools/xtensa-esp-elf-gdb/12.1_20231023/xtensa-esp-elf-gdb/bin/xtensa-esp32s3-elf-gdb",
+      "cwd": "${workspaceFolder}",
+      "setupCommands": [
+        { "text": "target extended-remote :3333" },
+        { "text": "set remote hardware-watchpoint-limit 2" },
+        { "text": "mon reset halt" },
+        { "text": "maintenance flush register-cache" },
+        { "text": "thb app_main" }
+      ]
+    }
+  ]
+}
+```
+
+Show how to attach in VSCode, set breakpoints, print values.
+
+### Custom PCB design tips
+
+Do not add a USB-to-UART, it is built-in to ESP32-S3 + ESP32-C3
+
+Buttons are not required for switching to BOOT mode.
+
+Don't forget strapping pins and pull-up resistors.
+
+### Multi-target repo organization
+
+```text
+├── bitclock-fw/
+│   ├── components/
+│   ├── main/
+│   ├── target-board-v1/
+│   ├── target-board-v2/
+│   ├── partitions.csv
+│   └── sdkconfig.defaults
+```
+
+#### bitclock-fw/target-board-v2/
+
+**Source files**
+
+```text
+├── .vscode/
+│   ├── c_cpp_properties.json
+│   ├── launch.json
+│   └── settings.json
+├── CMakeLists.txt
+├── dependencies.lock
+├── sdkconfig
+```
+
+**Symlinks**
+
+```text
+├── components/
+├── main/
+├── partitions.csv
+```
+
+**Auto-generated files**
+
+```text
+├── sdkconfig
+├── dependencies.lock
+```
+
+### Parting thoughts
+
+In this post, we outlined how to set up a development environment for an ESP32 project using ESP-IDF and VSCode instead of the more restrictive Arduino IDE.
+
+In future posts we'll go into:
+
+- Multi-threaded apps with freertos
+- Working with e-ink displays and LVGL graphics
+- Designing custom PCBs to fit 3D printed enclosures
+
+In the meantime, send any comments or development tips to brady@bitclock.io!
+
+Also if you're interested in a cute desk clock + air quality monitor for your desk that inspired this post, order one at [bitclock.io](https://bitclock.io).
+It's completely open source and a fun hackable device to get started with ESP32 development.
+
+</Paper>
+
+by Brady Law

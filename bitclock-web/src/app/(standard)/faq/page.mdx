@@ -1,0 +1,113 @@
+### How do I power my Bitclock?
+
+The device is powered via a USB-C port, any USB cable that can connect with USB-C on one side should work.
+
+It is recommended that you power it from an always-on power source: either a wall adapter from an old iPhone, a desktop, etc.
+
+Device is very low power so any power source rated for at least 250mA @ 5V (> 1.25W) will suffice.
+
+### How do I set up my new Bitclock?
+
+Power the device with a USB-C cable and connect to it by visiting [bitclock.io/connect](/connect) in Google Chrome on a desktop/laptop.
+
+From there, input your Wi-Fi credentials so the device can connect to the internet and sync clocks + weather.
+
+The configuration tool uses Web Bluetooth to communicate to the Bitclock. Make sure Bluetooth on your computer is enabled.
+
+Many browsers, including most mobile browsers, [don't support Web Bluetooth](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API#browser_compatibility), so you'll need to use Google Chrome for macOS/Windows.
+
+### Is it difficult to 3D print the enclosure myself?
+
+No, in fact it should be very easy to print on a properly tuned 3D printer! You can find the STL files and printing tips on [GitHub](https://github.com/goat-hill/bitclock/tree/master/bitclock-enclosure).
+
+It takes around 2 hours on a Prusa Mini+, and the print is relatively simple with no supports. I've tested many prints with PETG and the prints have been reliable.
+
+Make sure the Z adjustment for the first layer is [properly tuned](https://help.prusa3d.com/article/live-adjust-z_112427) since that will be the visible front of the Bitclock.
+
+### How do I make a custom clockface app?
+
+This is a bit complicated at the moment, but in the future I hope to make this much more approachable and documented! Here is some info in the meantime.
+
+Bitclock leverages [FreeRTOS](https://www.freertos.org/) for multi-tasking. A display task is responsible for controlling the e-ink display.
+
+The display task is defined in [eink_display.c](https://github.com/goat-hill/bitclock/blob/master/bitclock-fw/main/tasks/eink_display.c), and utilizes [LVGL](https://github.com/lvgl/lvgl) to render what appears on the display.
+
+LVGL views are defined in the [lvgl/](https://github.com/goat-hill/bitclock/tree/master/bitclock-fw/main/lvgl) directory.
+
+If your clockface requires networking or some other background work, I suggest creating a separate task for that logic. See the [weather.c](https://github.com/goat-hill/bitclock/blob/master/bitclock-fw/main/tasks/weather.c) task as an example of making regular background network requests.
+
+### How accurate are the sensors?
+
+The sensors from Sensirion claim to be "factory calibrated", but don't expect perfect accuracy from them.
+
+I've made best efforts to follow datasheet recommendations for getting accurate readings from the sensors. In my DIY testing,
+they all seem responsive to environmental changes but accuracy is not guaranteed.
+
+Specifically, in my testing the temperature readings from the SHT41 were typically \~4°C too hot. In this case, the offset seems consistent so I added an [offset to the measurement](https://github.com/goat-hill/bitclock/blob/a495f9582fb3601ba604b6d4db3fd6bbdfef9350/bitclock-fw/main/tasks/sht4x.c#L98-L112).
+
+Sensor details from Sensirion:
+
+- [SHT41 ±1.8% / max. ±2.5% RH Digital humidity and temperature sensor](https://sensirion.com/products/catalog/SHT41)
+- [SCD40 CO₂ accuracy of ±(50 ppm + 5% MV) @400-2000 ppm](https://sensirion.com/products/catalog/SCD40)
+- [SGP41 VOC and NOx sensor](https://sensirion.com/products/catalog/SGP41)
+
+### Can the device be battery powered?
+
+At the moment, no. The enclosure, PCB, and software all assume USB as the source of power.
+
+The device runs at a pretty lower power usage (\~0.25W) so it could be tweaked in the future.
+
+### Why does it not have a PM2.5 particulate sensor?
+
+Wildfires are a growing concern here in California and I'd love to add a particulate sensor.
+
+Unfortunately, particulate sensors like the [Plantower PM2.5 sensor](https://learn.adafruit.com/pm25-air-quality-sensor/overview) have very large form factors and
+I decided to omit them from the current design.
+
+My hope is in the future there will be cheap sensors with a smaller form factor, like the unreleased [BMV080](https://www.bosch-sensortec.com/products/environmental-sensors/particulate-matter-sensor/bmv080/).
+
+In fact, there is a port on the Bitclock based on preliminary datasheets from that sensor! If it ever releases and is accurate, I'd like to integrate it in the future.
+
+### Why is this thing so expensive?
+
+The e-ink display and CO2 sensor components alone cost $30 per unit. Alternative CO2 sensors products typically cost well over $100.
+
+There's also low volume PCB assembly costs, as well as 3D printing.
+
+### Can I place the Bitclock somewhere not at a desk?
+
+Of course, although keep in mind the display size, viewing angle, and font sizes were picked with a desk setup in mind.
+
+At longer viewing distances beyond a few feet, it can be difficult to read some of the smaller text.
+
+### Does it have a backlight?
+
+No, the display requires an external light source. In future versions I'll consider adding a backlight but the current version doesn't include one.
+
+### Does the device integrate with Apple HomeKit / Google Home / Alexa...
+
+Not yet, but I'd like to add that with a future software update!
+
+It would be great to integrate this with home automation to turn on fans, AC, etc.
+
+### What is the e-ink display like, and why does it use one?
+
+Similar to an Amazon Kindle, the device has an e-ink display that operates by reflecting external light vs emitting light itself. This gives the device a
+very natural aesthetic that looks more like paper as opposed to a bright and distracting display.
+
+Each pixel is 1 bit color (black or white), although you can simulate some grays through dithering.
+
+The display can be updated in two ways: a "fast update" which immediately updates only certain pixels or a "full refresh" which blinks the entire display between
+black and white for the cleanest update.
+
+While "fast updates" are the least distracting, but over time they can lead to "ghosting" where pixels are not cleanly reset. That's where an occassional "full refresh" where the screen blinks between black and white to cleanly reset the display and show the clearest image.
+
+### How does the device feel?
+
+The 3D printed enclosure is extremely light, under 0.2 lbs or ~60g. I've tried to make an attractive looking device, but it can still have an unavoidable "prototype" feel due to the nature of 3D printing as opposed injection molding or using heavier materials.
+
+There are some visible layer layer lines, and the front and back have a textured surface from the textured plate it prints on.
+
+### Other questions, comments, feedback?
+
+Please ask! Reach me at brady@bitclock.io

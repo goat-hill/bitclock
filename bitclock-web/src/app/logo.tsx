@@ -5,7 +5,7 @@ import React from "react";
 export default function Logo() {
   return (
     <Center>
-      <Box w={{ base: 150, md: 400, xl: 600 }}>
+      <Box w={{ base: 250, md: 400, xl: 600 }}>
         <Link href="/" style={{ color: "rgb(41, 41, 41)" }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -3,7 +3,7 @@ import "@mantine/code-highlight/styles.css";
 
 import type { MDXComponents } from "mdx/types";
 import { CodeHighlight } from "@mantine/code-highlight";
-import { Anchor, Title } from "@mantine/core";
+import { Anchor, Title, Code } from "@mantine/core";
 import Link from "next/link";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -41,7 +41,15 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     code: (props) => {
       const lang = props.className?.replace("language-", "");
-      return <CodeHighlight language={lang} code={props.children as string} />;
+      if (!props.className) {
+        // Inline code block
+        return <Code>{props.children}</Code>;
+      } else {
+        return (
+          <CodeHighlight language={lang} code={props.children as string} />
+        );
+      }
+      // return <CodeHighlight language={lang} code={props.children as string} />;
     },
   };
 }

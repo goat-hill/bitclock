@@ -4,11 +4,9 @@ import "@mantine/core/styles.css";
 import { Analytics } from "@vercel/analytics/react";
 
 import {
-  Center,
   ColorSchemeScript,
   MantineProvider,
   createTheme,
-  Box,
   Anchor,
   Text,
 } from "@mantine/core";
@@ -23,7 +21,10 @@ const overpass = Overpass({
 });
 
 export const metadata: Metadata = {
-  title: "Bitclock",
+  title: {
+    template: "%s | Bitclock",
+    default: "Bitclock",
+  },
   description:
     "An open source e-ink desk companion, clock, and air quality monitor.",
   keywords: [
@@ -57,6 +58,7 @@ export default function RootLayout({
     <html lang="en" className={`${overpass.variable}`}>
       <head>
         <ColorSchemeScript />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body
         style={{
