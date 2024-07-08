@@ -5,7 +5,8 @@ Open source e-ink desk companion, clock, and air quality monitor.
 
 https://bitclock.io
 
-<img src="https://github.com/goat-hill/bitclock/assets/220799/4416cb05-0625-438e-961c-3917e9b5334f" width="500" alt="Device photo" />
+<img src="https://github.com/goat-hill/bitclock/assets/220799/bc8474b8-f251-447f-9529-ead370a547e0" alt="Bitclock photo" width="800" />
+
 
 Visit https://bitclock.io/connect to configure your existing device
 
