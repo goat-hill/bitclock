@@ -255,7 +255,7 @@ export default function Home() {
                   </Table.Td>
                   <Table.Td>
                     <Text size="sm">
-                      Temperature + relative humdiity (SHT41)
+                      Temperature + relative humdiity (SHT40)
                       <br />
                       CO₂ (SCD40)
                       <br />
