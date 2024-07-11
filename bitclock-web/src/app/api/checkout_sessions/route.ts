@@ -87,7 +87,7 @@ async function postImpl(
         { shipping_rate: process.env.STRIPE_BITCLOCK_SHIPPING_ID },
       ],
       mode: "payment",
-      return_url: `${process.env.STRIPE_CALLBACK_SCHEME}${process.env.NEXT_PUBLIC_VERCEL_URL}/order_cb?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `${process.env.STRIPE_CALLBACK_SCHEME}${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/order_cb?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     return [

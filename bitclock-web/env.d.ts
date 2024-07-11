@@ -8,7 +8,7 @@ namespace NodeJS {
     STRIPE_BITCLOCK_PCB_PRICE: string;
     STRIPE_BITCLOCK_SHIPPING_ID: string;
     STRIPE_CA_TAX_RATE: string;
-    NEXT_PUBLIC_VERCEL_URL: string;
+    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: string;
     STRIPE_CALLBACK_SCHEME: string;
   }
 }
