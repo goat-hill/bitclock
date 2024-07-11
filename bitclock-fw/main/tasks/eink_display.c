@@ -488,15 +488,15 @@ void eink_task_run(void *pvParameters) {
   lv_helper_styles_init();
 
   // Short boot logo
-  // lv_helper_set_view_mode(VIEW_MODE_LOGO);
-  // lv_helper_update();
-  // lv_timer_handler();
-  // eink_send_config(false);
-  // eink_send_image_data();
-  // eink_update();
-  // eink_power_off();
-  // frame_count++;
-  // vTaskDelay(pdMS_TO_TICKS(1500));
+  lv_helper_set_view_mode(VIEW_MODE_LOGO);
+  lv_helper_update();
+  lv_timer_handler();
+  eink_send_config(false);
+  eink_send_image_data();
+  eink_update();
+  eink_power_off();
+  frame_count++;
+  vTaskDelay(pdMS_TO_TICKS(1500));
 
   aqi_data_t aqi_data = {0};
   view_mode_t view_mode = VIEW_MODE_CLOCK;
