@@ -168,6 +168,8 @@ esp_err_t sht4x_measure_high_precision() {
   if (sensirion_crc(sht4xResponse + 3) == sht4xResponse[5]) {
     rh_ticks = sht4xResponse[3] * 256 + sht4xResponse[4];
     rh_pRH = -6 + (125 * ((float)rh_ticks) / 65535);
+    // ESP_LOGI(TAG, "rel humidity ticks 0x%x 0x%x %" PRIu16 " %f",
+    // sht4xResponse[3], sht4xResponse[4], rh_ticks, rh_pRH);
     if (rh_pRH > 100) {
       rh_pRH = 100;
     } else if (rh_pRH < 0) {
