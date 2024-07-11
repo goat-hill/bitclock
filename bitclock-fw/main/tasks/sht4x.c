@@ -7,6 +7,7 @@
 #include "libs/sensor_utils.h"
 #include "pins.h"
 #include "tasks/ble.h"
+#include <inttypes.h>
 
 static const char *TAG = "sht4x";
 
@@ -31,7 +32,7 @@ static const uint8_t kMeasureHighPrecision = 0xfd; // 8.5ms max
 // #define MEASURE_MEDIUM_PRECISION_DELAY pdMS_TO_TICKS(6)
 // static const uint8_t kMeasureLowPrecision = 0xe0; // 1.6ms max
 // #define MEASURE_LOW_PRECISION_DELAY pdMS_TO_TICKS(3)
-// static const uint8_t kReadSerialNum = 0x89;
+static const uint8_t kReadSerialNum = 0x89;
 
 // static const uint8_t kSoftReset = 0x94;
 
@@ -58,6 +59,52 @@ static void sht4x_init() {
   } else {
     ESP_LOGE(TAG, "Failed to grab i2c lock on init.");
   }
+}
+
+esp_err_t sht4x_read_serial() {
+  static esp_err_t ret;
+
+  if (xSemaphoreTake(i2c_semaphore, pdMS_TO_TICKS(1000))) {
+    ret = i2c_master_transmit(device_handle,
+                              &kReadSerialNum, // write buffer
+                              1,               // write size
+                              2000             // xfer_timeout_ms
+    );
+    if (ret != ESP_OK) {
+      ESP_LOGE(TAG, "Failed to transmit to sht4x: %d", ret);
+    }
+
+    vTaskDelay(1);
+
+    ret = i2c_master_receive(device_handle,
+                             sht4xResponse,         // read buffer
+                             sizeof(sht4xResponse), // read size
+                             2000                   // xfer_timeout_ms
+    );
+    if (ret != ESP_OK) {
+      ESP_LOGE(TAG, "Failed to read from sht4x: %d", ret);
+    }
+
+    xSemaphoreGive(i2c_semaphore);
+  } else {
+    ESP_LOGE(TAG, "Failed to grab i2c lock.");
+  }
+
+  ESP_LOGI(TAG, "serial: 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x", sht4xResponse[0],
+           sht4xResponse[1], sht4xResponse[2], sht4xResponse[3],
+           sht4xResponse[4], sht4xResponse[5]);
+  if (sensirion_crc(sht4xResponse) == sht4xResponse[2] &&
+      sensirion_crc(sht4xResponse + 3) == sht4xResponse[5]) {
+    uint32_t serial_number = (sht4xResponse[0] << 24) +
+                             (sht4xResponse[1] << 16) +
+                             (sht4xResponse[3] << 8) + sht4xResponse[4];
+    ESP_LOGI(TAG, "Serial: %" PRIu32, serial_number);
+  } else {
+    ret = ESP_ERR_INVALID_CRC;
+    ESP_LOGE(TAG, "Invalid CRC for reading serial");
+  }
+
+  return ret;
 }
 
 esp_err_t sht4x_measure_high_precision() {
@@ -152,6 +199,7 @@ void sht4x_task_run(void *pvParameters) {
 
   // Wait at least one cycle (10ms) for device to power on.
   vTaskDelay(1);
+  sht4x_read_serial();
 
   while (1) {
     sht4x_measure_high_precision();
