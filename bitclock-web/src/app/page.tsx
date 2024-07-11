@@ -47,7 +47,7 @@ export default function Home() {
     {
       icon: IconBrandGithub,
       title: "Hackable + open source",
-      body: "3D print your own case, or develop your own clockface app. It's unlocked, open source, and ready for hacking!",
+      body: "3D-print your own case or create a new clockface app. Bitclock is unlocked + open source with 2.4 GHz Wi-Fi and Bluetooth 5 (LE) built-in.",
     },
   ];
   return (
