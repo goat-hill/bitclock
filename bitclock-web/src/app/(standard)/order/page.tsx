@@ -44,7 +44,7 @@ export default function OrderPage() {
   }, [selectedProductInfo]);
 
   const options = { fetchClientSecret };
-  return <>Coming soon...</>;
+
   return (
     <>
       <Text ta="center" size="sm" mt="sm" mb="lg">
