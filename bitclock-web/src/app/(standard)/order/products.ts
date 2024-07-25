@@ -19,7 +19,7 @@ const products: ProductInfo[] = [
     description:
       "Complete Bitclock with a 3D printed rock white PETG enclosure. Rock pattern may vary slightly by print.",
     image: BitclockWhiteImage,
-    price: 69,
+    price: 79,
     priceId: process.env.STRIPE_BITCLOCK_WHITE_PRICE,
   },
   {
@@ -27,7 +27,7 @@ const products: ProductInfo[] = [
     image: BitclockBlackImage,
     name: "Bitclock (Black)",
     description: "Complete Bitclock with a 3D printed black PETG enclosure.",
-    price: 69,
+    price: 79,
     priceId: process.env.STRIPE_BITCLOCK_BLACK_PRICE,
   },
   {
@@ -36,7 +36,7 @@ const products: ProductInfo[] = [
     name: "Bitclock PCB",
     description:
       "Bitclock PCB with attached E-ink display. Purchase this if you plan to print the enclosure yourself.",
-    price: 59,
+    price: 69,
     priceId: process.env.STRIPE_BITCLOCK_PCB_PRICE,
   },
 ];
