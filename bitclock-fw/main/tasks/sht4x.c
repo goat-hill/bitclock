@@ -27,7 +27,7 @@ static i2c_master_dev_handle_t device_handle;
 // All 6 byte response except reset, which is no response.
 
 // static const uint8_t kMeasureHighPrecision = 0xfd; // 8.5ms max
-#define MEASURE_HIGH_PRECISION_DELAY pdMS_TO_TICKS(1100)
+#define MEASURE_HIGH_PRECISION_DELAY pdMS_TO_TICKS(1050)
 // static const uint8_t kMeasureMediumPrecision = 0xf6; // 4.5ms max
 // #define MEASURE_MEDIUM_PRECISION_DELAY pdMS_TO_TICKS(6)
 // static const uint8_t kMeasureLowPrecision = 0xe0; // 1.6ms max

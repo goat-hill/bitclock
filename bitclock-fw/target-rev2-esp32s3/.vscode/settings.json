@@ -9,6 +9,7 @@
         "condition_variable": "c",
         "ctime": "c",
         "mutex": "c",
-        "limits": "c"
+        "limits": "c",
+        "cstdint": "c"
     }
 }
