@@ -201,8 +201,6 @@ void sht4x_task_run(void *pvParameters) {
 
   // Wait at least one cycle (10ms) for device to power on.
   vTaskDelay(1);
-  sht4x_read_serial();
-  vTaskDelay(1);
 
   while (1) {
     sht4x_measure_high_precision();
