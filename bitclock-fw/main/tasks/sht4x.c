@@ -26,8 +26,8 @@ static i2c_master_dev_handle_t device_handle;
 // I2C commands
 // All 6 byte response except reset, which is no response.
 
-static const uint8_t kMeasureHighPrecision = 0xfd; // 8.5ms max
-#define MEASURE_HIGH_PRECISION_DELAY pdMS_TO_TICKS(10)
+// static const uint8_t kMeasureHighPrecision = 0xfd; // 8.5ms max
+#define MEASURE_HIGH_PRECISION_DELAY pdMS_TO_TICKS(1100)
 // static const uint8_t kMeasureMediumPrecision = 0xf6; // 4.5ms max
 // #define MEASURE_MEDIUM_PRECISION_DELAY pdMS_TO_TICKS(6)
 // static const uint8_t kMeasureLowPrecision = 0xe0; // 1.6ms max
@@ -36,7 +36,7 @@ static const uint8_t kReadSerialNum = 0x89;
 
 // static const uint8_t kSoftReset = 0x94;
 
-// static const uint8_t kActivateHeater_200mW_1000ms = 0x39;
+static const uint8_t kActivateHeater_200mW_1000ms = 0x39;
 // static const uint8_t kActivateHeater_200mW_100ms = 0x32;
 // static const uint8_t kActivateHeater_110mW_1000ms = 0x2f;
 // static const uint8_t kActivateHeater_110mW_100ms = 0x24;
@@ -114,9 +114,9 @@ esp_err_t sht4x_measure_high_precision() {
 
   if (xSemaphoreTake(i2c_semaphore, pdMS_TO_TICKS(1000))) {
     ret = i2c_master_transmit(device_handle,
-                              &kMeasureHighPrecision, // write buffer
-                              1,                      // write size
-                              1000                    // xfer_timeout_ms
+                              &kActivateHeater_200mW_1000ms, // write buffer
+                              1,                             // write size
+                              1000                           // xfer_timeout_ms
     );
     if (ret != ESP_OK) {
       ESP_LOGE(TAG, "Failed to transmit to sht4x: %d", ret);
@@ -204,6 +204,6 @@ void sht4x_task_run(void *pvParameters) {
 
   while (1) {
     sht4x_measure_high_precision();
-    vTaskDelay(pdMS_TO_TICKS(5000));
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
