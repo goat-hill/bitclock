@@ -174,11 +174,7 @@ esp_err_t sht4x_measure_high_precision() {
     rh_pRH = -6 + (125 * ((float)rh_ticks) / 65535);
     // ESP_LOGI(TAG, "rel humidity ticks 0x%x 0x%x %" PRIu16 " %f",
     // sht4xResponse[3], sht4xResponse[4], rh_ticks, rh_pRH);
-    if (rh_pRH > 100) {
-      rh_pRH = 100;
-    } else if (rh_pRH < 0) {
-      rh_pRH = 0;
-    }
+
     // Because are temperature is offset by PCB/Enclosure heating
     // We need to compensate the RH too. See
     // "App Notes Humidity at a Glance" for the source of this equation:
@@ -193,7 +189,15 @@ esp_err_t sht4x_measure_high_precision() {
     relativeHumidityEnclosureMultiplier =
         exp((4283.78 * -degCEnclosureOffset) /
             ((243.12 + degC - degCEnclosureOffset) * (243.12 + degC)));
-    relativeHumidity = rh_pRH * relativeHumidityEnclosureMultiplier;
+    rh_pRH *= relativeHumidityEnclosureMultiplier;
+
+    if (rh_pRH > 100) {
+      rh_pRH = 100;
+    } else if (rh_pRH < 0) {
+      rh_pRH = 0;
+    }
+
+    relativeHumidity = rh_pRH;
   } else {
     ret = ESP_ERR_INVALID_CRC;
     ESP_LOGE(TAG, "Invalid CRC for humidity");
