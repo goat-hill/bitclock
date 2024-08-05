@@ -232,6 +232,7 @@ export default function Home() {
             alt="Prusa slicer screenshot of enclosure 3D print"
             radius="md"
             fit="contain"
+            bd="1px solid gray.6"
           />
           <Box flex={1}>
             <Title order={2}>Technical specs</Title>
