@@ -2,14 +2,14 @@ import NextImage from "next/image";
 import { Image } from "@mantine/core";
 import BannerImage from "./banner.png";
 import { Box, Paper, Title } from "@mantine/core";
-import InlineVideo from "@/app/(standard)/blog/inline-video";
+import InlineVideo from "@/app/(blog)/blog/inline-video";
 import BitclockImage from "./banner.png";
 
 export const metadata = {
   // author: "Brady Law",
   // date: "2024-06-20",
-  title: "ESP32 development with ESP-IDF & VSCode",
-  description: "Tips for projects that outgrow the Arduino SDK",
+  title: "Advanced ESP32 programming with ESP-IDF",
+  description: "For projects that outgrow the Arduino SDK",
   // bannerImage: BannerImage,
   // tags: ["esp32", "esp-idf", "fimrware"]
 };
@@ -39,62 +39,81 @@ export const metadata = {
   src={BitclockImage}
   w="100%"
   width={928}
-  h="auto"
+  h={300}
   alt="Bitclock photo"
   radius="md"
-  fit="contain"
+  fit="cover"
   mt="md"
 />
 
 <Paper shadow="xs" px="md" py="xs" mt="xl">
-Hobbyist electronics projects are increasingly turning to the ESP32 SoC (System-on-a-Chip) to control their devices. [Bitclock](https://github.com/goat-hill/bitclock) is no exception, and features an [ESP32-S3-WROOM-1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-WROOM-1-N8/15200089) module mounted to the board.
+### Hobbyist electronics ❤️ ESP32
 
-These modules are popular for a number of reasons:
+Many hobbyist electronics projects, such as [Bitclock](https://github.com/goat-hill/bitclock), use ESP32 modules to power their devices.
 
-- **Simplicity**: Built-in Wi-Fi, Bluetooth, and flash on a single module
+These SoC (system-on-a-chip) components are popular for a variety of reasons:
+
+- **Simplicity**: Built-in Wi-Fi, Bluetooth, antenna and flash
 - **Low price**: Modules for [~$1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-C3-MINI-1-N4/13877574), dev boards for [~$10](https://www.amazon.com/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF/)
 - **SDK**: Extensive development framework and high quality [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html)
 - **Low power consumption**: Can operate in the 10s of mA or sleep in µA
 - **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others so it's easier to sell
 
-### Outgrowing the Arduino SDK
+When developing firmware for these modules, many often start with the familiar Arduino SDK. However, as projects grow in complexity the Arduino ecosystem may no longer be the best choice.
 
-Most ESP32 tutorials begin with installing the Arduino IDE. It's popular because it only takes a few steps to get a running "Hello World" or blinking LED. The IDE automatically downloads an ESP32 SDK and has a simple but comprehensive interface for getting started.
+In this post, I'll outline a more advanced firmware development setup using the Espressif **ESP-IDF SDK**, with **VSCode** as the IDE. This setup has worked well for the [Bitclock](https://github.com/goat-hill/bitclock) open-source project.
 
-However, more complex ESP32 projects can quickly overwhelm the constraints of single Arduino sketch file. The Arduino IDE + SDK is efficient for bootstrapping projects but is **not the best fit for more advanced ESP32 projects.**
+### Arduino vs ESP-IDF
 
-When exploring development environments for Bitclock, I had a few objectives:
+#### Abstractions can add complexity
 
-#### 1. Remove unnecessary abstractions
+For a simple app like a blinking LED, the familiar Arduino SDK can be a fast and familiar way to get your project started. The SDK can (in theory) make your code hardware-agnostic. This is made possible through hardware-specific ports, and in the case of ESP32 devices, Espressif maintains the [arduino-esp32](https://github.com/espressif/arduino-esp32) port.
 
-When using the Arduino IDE, you are tied to using the [arduino-esp32](https://github.com/espressif/arduino-esp32) SDK and the Arduino [programming language](https://www.arduino.cc/reference/en/).
+An alternative to using the Arduino SDK is to use the [ESP-IDF](https://github.com/espressif/esp-idf) framework, developed by Espressif specifically for their ESP32 chips. Notably, the [arduino-esp32](https://github.com/espressif/arduino-esp32) port
+uses ESP-IDF under the hood to function and can be considered an abstraction on top of ESP-IDF.
 
-The [arduino-esp32](https://github.com/espressif/arduino-esp32) SDK is an abstraction on top of the ESP32-specific [ESP-IDF](https://github.com/espressif/esp-idf) SDK. While there are some advantages to using an abstract Arduino SDK that can port to non-ESP32 board types, complex applications will benefit from using the [ESP-IDF](https://github.com/espressif/esp-idf) framework directly and optimizing for the hardware selceted for the project.
+Using the generic Arduino SDK abstraction layer brings both benefits and drawbacks:
 
-The ESP-IDF framework is packed with features and is extremely well documented. Some features [Bitclock](https://github.com/goat-hill/bitclock) leverages include:
+- ✅ Code with a familiar SDK
+- ✅ Better compatibility across different hardware
+- ✅ Less effort to bootstrap
+- ❌ Extra abstraction code = more complexity and bugs
+- ❌ Abstract Arduino SDK cannot make ESP32 assumptions
+- ❌ Less control over hardware, especially important given resource+power constraints
 
-- [freertos](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos.html) - Multi-threading and better display performance
+The ESP-IDF is still a high-level framework, and is extremely well [documented](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html).
+
+Some ESP-IDF [Bitclock](https://github.com/goat-hill/bitclock) could leverage include:
+
+- [freertos](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos.html) - Multi-threading for better display performance
 - [ota](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ota.html) - OTA firmware updates via Wi-Fi or bluetooth
 - [partitions](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html) - For custom layouts of flash memory
 - [bt](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/index.html) - Bluetooth + BLE applications
 
-By using a generic IDE instead of Arduino, we can start using the ESP-IDF SDK instead.
+The Bitclock project was already commited to using ESP32 modules, so there wasn't much benefit to using anything generic. As such, the decision was made to commit to the ESP-IDF framework.
 
-#### 2. Use a popular IDE
+#### Graduating from Arduino IDE
 
-VSCode is already a popular choice for backend, web, and embedded software development. It has strong IDE support for development in C and C++. It is free, extremely performant, and the backing of Microsoft to keep it working well. It also integrates with Github Copilot which can [speed up certain development tasks](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/).
+While it was decided that Bitclock would use ESP-IDF as opposed to Arduino, there was still a decision to make about the IDE.
 
-And last but not least, it makes it easy for your project to have more than one source file! 😀
+VSCode was my preferred choice here. Why?
 
-Before switching to using ESP-IDF + VSCode environment, I wanted to validate that the following developer features would still be available:
+- Strong IDE support for C and C++ development
+- Extremely performant
+- Supports multiple files + directories way better then Arduino IDE
+- Free
+- Backed by Microsoft
+- Integrates with Github Copilot which can [speed up development tasks](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
 
-1. **Simple build + run + monitor**
+That said, The Arduino IDE makes it very easy to boostrap and debug embedded projects. It was important for the Bitclock project to have a developer environment with equivalent functionality for:
+
+1. **Simple build + run + serial log monitoring**
 2. **Static analysis + code completion**
-3. **Interactive debugging**
+3. **Interactive GDB debugging**
 
-In the sections below, I'll show how this functionality is preserved.
+It turns out this is all possible within VSCode, but does require a bit more setup work, which I will outline in the remainder of this post.
 
-#### \* - A note on PlatformIO
+#### A note on PlatformIO
 
 [PlatformIO](https://platformio.org/) is a popular project for ESP32 development within VSCode.
 
