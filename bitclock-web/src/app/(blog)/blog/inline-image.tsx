@@ -7,13 +7,14 @@ import { Box, Flex, Text } from "@mantine/core";
 interface InlineImageProps {
   src: typeof NextImage;
   alt: string;
+  w?: typeof Box.w;
   label?: string;
 }
 
 export default function InlineImage(props: InlineImageProps) {
   return (
     <Flex direction="column" justify="center" align="center" gap="sm">
-      <Box w={{ base: "100%", sm: 600, md: 800 }}>
+      <Box w={props.w ?? { base: "100%", sm: 600, md: 800 }}>
         <Image
           component={NextImage}
           src={props.src}

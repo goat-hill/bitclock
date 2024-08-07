@@ -1,10 +1,10 @@
 import NextImage from "next/image";
-import { Image } from "@mantine/core";
-import BannerImage from "./banner.png";
-import { Box, Paper, Title } from "@mantine/core";
+import { Box, Image, Paper, Title } from "@mantine/core";
 import InlineVideo from "@/app/(blog)/blog/inline-video";
 import InlineImage from "@/app/(blog)/blog/inline-image";
-import BitclockImage from "./banner.png";
+import BitclockBannerImage from "./banner.png";
+import BitclockImage from "@/app/img/bitclock.jpg";
+import BitclockPcbImage from "@/app/img/pcb.jpg";
 import PlatformioImage from "./platformio.png";
 
 export const metadata = {
@@ -36,21 +36,7 @@ export const metadata = {
   {metadata.description}
 </Title>
 
-<Image
-  component={NextImage}
-  src={BitclockImage}
-  w="100%"
-  width={928}
-  h={300}
-  alt="Bitclock photo"
-  radius="md"
-  fit="cover"
-  mt="md"
-/>
-
 <Paper shadow="xs" px="md" py="xs" mt="xl">
-### Hobbyist electronics ❤️ ESP32
-
 Many hobbyist electronics projects, including [Bitclock](https://github.com/goat-hill/bitclock), use ESP32 modules to power their devices.
 
 These SoC (system-on-a-chip) components are popular for a variety of reasons:
@@ -61,9 +47,15 @@ These SoC (system-on-a-chip) components are popular for a variety of reasons:
 - **Low power consumption**: Can operate in the 10s of mA or sleep in µA
 - **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others so it's easier to sell
 
-When developing firmware for these modules, many start with the familiar Arduino SDK. However, as projects grow in complexity the Arduino ecosystem may no longer be the best choice.
+<InlineImage
+  src={BitclockPcbImage}
+  alt="Bitclock PCB photo"
+  label="Bitclock PCB - Powered by ESP32-S3"
+/>
 
-In this post, I'll outline a more advanced firmware development setup using the Espressif **ESP-IDF SDK**, with **VSCode** as the IDE. This setup has worked well for the [Bitclock](https://github.com/goat-hill/bitclock) open-source project.
+When starting these projects, developers may be drawn to the familiar Arduino SDK. However, as projects grow in complexity the Arduino ecosystem may no longer be the best choice.
+
+In this post, I'll outline a more advanced firmware development setup using the Espressif **ESP-IDF SDK**, alongside **VSCode** as the IDE. This setup has proven effective for the [Bitclock](https://github.com/goat-hill/bitclock) open-source project.
 
 ### Arduino vs ESP-IDF
 
@@ -144,7 +136,7 @@ Fortunately, there is an alternative way to get the functionality I desired usin
 
 ### ESP-IDF toolchain setup
 
-In order to start developing with ESP-IDF, you'll first need to install the ESP-IDF toolchain. Follow the [instructions on the Espressif website here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/linux-macos-setup.html).
+In order to start developing with ESP-IDF, you'll first need to install the toolchain. Follow the [instructions from Espressif here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/linux-macos-setup.html).
 
 On macOS, you'll need create a directory to install the SDK to and the process goes something like this:
 
@@ -157,19 +149,18 @@ source export.sh
 
 Make sure to select the latest release version of ESP-IDF, the board you are using in place of `esp32s3` and read their docs for the latest instructions.
 
-### Basic project setup
+### ESP-IDF project bootstrapping
 
-Create a separate new directory to house your project source code.
+With the toolchain now installed, create a separate directory to house the source code of your new project.
 
 See the [ESP-IDF Hello World](https://github.com/espressif/esp-idf/tree/v5.2.2/examples/get-started/hello_world) example for the basic project setup.
 
 The file structure will start with the following:
 
 ```text
-├── CMakeLists.txt
-├── pytest_hello_world.py      Python script used for automated testing
+├── CMakeLists.txt          Top-level build configuration
 ├── main
-│   ├── CMakeLists.txt
+│   ├── CMakeLists.txt      Defines main build target + dependencies
 │   └── hello_world_main.c
 ```
 
@@ -179,9 +170,13 @@ Once your project is created, and the ESP-IDF environment is active via `source 
 - `idf.py flash`
 - `idf.py monitor`
 
-The [Hello World example](https://github.com/espressif/esp-idf/tree/v5.2.2/examples/get-started/hello_world) does a good job of giving the basics of how an ESP-IDF project is organized, so this post will focus on other topics.
+The [Hello World example](https://github.com/espressif/esp-idf/tree/v5.2.2/examples/get-started/hello_world) does a good job of giving the basics of how an ESP-IDF project and the contents of CMakeLists.txt, so this post will focus on other topics.
 
 ### Static analysis + code completion
+
+If you want VSCode to be helpful with auto-completions, and be able to cmd+click to jump to function definitions from the SDK, there's a bit more setup to get hat working.
+
+Specifically, you need the VSCode [C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) installed from Microsoft and [IntelliSense](https://code.visualstudio.com/docs/cpp/customize-default-settings-cpp) properly configured for ESP-IDF.
 
 <InlineVideo
   src="/videos/vscode-completion.mp4"
@@ -190,10 +185,14 @@ The [Hello World example](https://github.com/espressif/esp-idf/tree/v5.2.2/examp
   label="Auto-completion from ESP-IDF SDK"
 />
 
+IntelliSense can be configured by adding a `.vscode/c_cpp_properties.json` to the root of your project directory. VSCode will read this file to configure the IDE to your project.
+
+Here's an example that worked for Bitclock's ESP32-S3:
+
 ```json
 {
   "env": {
-    "esp-version": "esp-13.2.0_20230928"
+    "esp-version": "esp-13.2.0_20240530"
   },
   "configurations": [
     {
@@ -212,15 +211,29 @@ The [Hello World example](https://github.com/espressif/esp-idf/tree/v5.2.2/examp
           "${workspaceFolder}/**"
         ],
         "limitSymbolsToIncludedHeaders": false
-      },
-      "defines": ["BOARD_TARGET=2"]
+      }
     }
   ],
   "version": 4
 }
 ```
 
+It does the following:
+
+- Sets `.compilerPath` to point to the GCC compiler used for the project
+- Sets `.compileCommands` to hint to IntelliSense the specific arguments for how each file was last compiled
+- Sets `.includePath` to include the core libraries for IntelliSense, [component](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/build-system.html) libraries, and your project workspace
+- Sets `.browse.path` to include same libraries for the ["Tag Parser" of VSCode](https://code.visualstudio.com/docs/cpp/faq-cpp#_what-is-the-difference-between-includepath-and-browsepath)
+
+Make sure the compiler path matches your environment. See the ESP-IDF [tools.json](https://github.com/espressif/esp-idf/blob/master/tools/tools.json) to see what version you should be pointing to. For example, ESP32-S3 uses the `extensa-esp-elf` compiler while ESP32-C3 uses `riscv32-esp-elf`.
+
+To be honest, I'm not entirely sure how each of these arugments impacts VSCode but I do know that in its entirety the configuration worked for my project!
+This configuration was [inspired by Espressif's VSCode extension](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/C_CPP_CONFIGURATION.md)
+I evaluated using extension directly but had more luck configuring things myself and avoiding yet-another-extension.
+
 ### Interactive debugging
+
+No IDE is complete without interactive debugging! Luckily, this was also possible with just a bit of configuration.
 
 <InlineVideo
   src="/videos/vscode-debug.mp4"
@@ -229,9 +242,7 @@ The [Hello World example](https://github.com/espressif/esp-idf/tree/v5.2.2/examp
   label="GDB interactive debugging using OpenOCD"
 />
 
-```sh
-idf.py openocd
-```
+First, add something like the following configuration to your `.vscode/launch.json`:
 
 ```json
 {
@@ -243,7 +254,7 @@ idf.py openocd
       "request": "launch",
       "program": "${workspaceFolder}/build/bitclock.elf",
       "MIMode": "gdb",
-      "miDebuggerPath": "/Users/bradylaw/.espressif/tools/xtensa-esp-elf-gdb/12.1_20231023/xtensa-esp-elf-gdb/bin/xtensa-esp32s3-elf-gdb",
+      "miDebuggerPath": "/Users/bradylaw/.espressif/tools/xtensa-esp-elf-gdb/14.2_20240403/xtensa-esp-elf-gdb/bin/xtensa-esp32s3-elf-gdb",
       "cwd": "${workspaceFolder}",
       "setupCommands": [
         { "text": "target extended-remote :3333" },
@@ -257,56 +268,15 @@ idf.py openocd
 }
 ```
 
-Show how to attach in VSCode, set breakpoints, print values.
+Make sure `.miDebuggerPath` points to your locally installed ESP-IDF toolchain and the appropriate debugger for your hardware. See the ESP-IDF [tools.json](https://github.com/espressif/esp-idf/blob/master/tools/tools.json) to see what version you should be pointing to.
 
-### Custom PCB design tips
+First, connect your ESP32 device that is flashed with your app, and start the local openOCD server
 
-Do not add a USB-to-UART, it is built-in to ESP32-S3 + ESP32-C3
-
-Buttons are not required for switching to BOOT mode.
-
-Don't forget strapping pins and pull-up resistors.
-
-### Multi-target repo organization
-
-```text
-├── bitclock-fw/
-│   ├── components/
-│   ├── main/
-│   ├── target-board-v1/
-│   ├── target-board-v2/
-│   ├── partitions.csv
-│   └── sdkconfig.defaults
+```sh
+idf.py openocd
 ```
 
-#### bitclock-fw/target-board-v2/
-
-**Source files**
-
-```text
-├── .vscode/
-│   ├── c_cpp_properties.json
-│   ├── launch.json
-│   └── settings.json
-├── CMakeLists.txt
-├── dependencies.lock
-├── sdkconfig
-```
-
-**Symlinks**
-
-```text
-├── components/
-├── main/
-├── partitions.csv
-```
-
-**Auto-generated files**
-
-```text
-├── sdkconfig
-├── dependencies.lock
-```
+TODO: Show how to attach in VSCode, set breakpoints, print values.
 
 ### Parting thoughts
 
@@ -319,6 +289,8 @@ In future posts we'll go into:
 - Designing custom PCBs to fit 3D printed enclosures
 
 In the meantime, send any comments or development tips to brady@bitclock.io!
+
+<InlineImage src={BitclockImage} alt="Bitclock photo" />
 
 Also if you're interested in a cute desk clock + air quality monitor for your desk that inspired this post, order one at [bitclock.io](https://bitclock.io).
 It's completely open source and a fun hackable device to get started with ESP32 development.

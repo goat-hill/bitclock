@@ -1,6 +1,6 @@
 {
   "env": {
-    "esp-version": "esp-13.2.0_20230928"
+    "esp-version": "esp-13.2.0_20240530"
   },
   "configurations": [
     {
