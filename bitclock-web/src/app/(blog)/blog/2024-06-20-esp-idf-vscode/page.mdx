@@ -3,13 +3,15 @@ import { Image } from "@mantine/core";
 import BannerImage from "./banner.png";
 import { Box, Paper, Title } from "@mantine/core";
 import InlineVideo from "@/app/(blog)/blog/inline-video";
+import InlineImage from "@/app/(blog)/blog/inline-image";
 import BitclockImage from "./banner.png";
+import PlatformioImage from "./platformio.png";
 
 export const metadata = {
   // author: "Brady Law",
   // date: "2024-06-20",
-  title: "Advanced ESP32 programming with ESP-IDF",
-  description: "For projects that outgrow the Arduino SDK",
+  title: "Advanced ESP32 development with ESP-IDF",
+  description: "For embedded projects that outgrow Arduino",
   // bannerImage: BannerImage,
   // tags: ["esp32", "esp-idf", "fimrware"]
 };
@@ -49,7 +51,7 @@ export const metadata = {
 <Paper shadow="xs" px="md" py="xs" mt="xl">
 ### Hobbyist electronics ❤️ ESP32
 
-Many hobbyist electronics projects, such as [Bitclock](https://github.com/goat-hill/bitclock), use ESP32 modules to power their devices.
+Many hobbyist electronics projects, including [Bitclock](https://github.com/goat-hill/bitclock), use ESP32 modules to power their devices.
 
 These SoC (system-on-a-chip) components are popular for a variety of reasons:
 
@@ -59,69 +61,90 @@ These SoC (system-on-a-chip) components are popular for a variety of reasons:
 - **Low power consumption**: Can operate in the 10s of mA or sleep in µA
 - **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others so it's easier to sell
 
-When developing firmware for these modules, many often start with the familiar Arduino SDK. However, as projects grow in complexity the Arduino ecosystem may no longer be the best choice.
+When developing firmware for these modules, many start with the familiar Arduino SDK. However, as projects grow in complexity the Arduino ecosystem may no longer be the best choice.
 
 In this post, I'll outline a more advanced firmware development setup using the Espressif **ESP-IDF SDK**, with **VSCode** as the IDE. This setup has worked well for the [Bitclock](https://github.com/goat-hill/bitclock) open-source project.
 
 ### Arduino vs ESP-IDF
 
-#### Abstractions can add complexity
+#### Arduino abstraction adds complexity, limits control
 
-For a simple app like a blinking LED, the familiar Arduino SDK can be a fast and familiar way to get your project started. The SDK can (in theory) make your code hardware-agnostic. This is made possible through hardware-specific ports, and in the case of ESP32 devices, Espressif maintains the [arduino-esp32](https://github.com/espressif/arduino-esp32) port.
+For a simple embedded app like a blinking LED, the Arduino SDK is a popular way to bootstrap projects.
+The generic SDK allows code to be hardware-agnostic, or at least partially.
+This is made possible through hardware-specific ports known as **Arduino Cores**.
 
-An alternative to using the Arduino SDK is to use the [ESP-IDF](https://github.com/espressif/esp-idf) framework, developed by Espressif specifically for their ESP32 chips. Notably, the [arduino-esp32](https://github.com/espressif/arduino-esp32) port
-uses ESP-IDF under the hood to function and can be considered an abstraction on top of ESP-IDF.
+Each Arduino Core implements the core-level APIs of Arduino for their respective hardware platforms. In the case of ESP32 devices, Espressif
+maintains the [arduino-esp32](https://github.com/espressif/arduino-esp32) core implementation.
 
-Using the generic Arduino SDK abstraction layer brings both benefits and drawbacks:
+An alternative to using the Arduino SDK is the [**ESP-IDF framework**](https://github.com/espressif/esp-idf), developed by Espressif specifically for their ESP32 chips.
+Notably, the [arduino-esp32](https://github.com/espressif/arduino-esp32) core
+uses ESP-IDF under the hood and is an abstraction layer on top.
 
-- ✅ Code with a familiar SDK
-- ✅ Better compatibility across different hardware
-- ✅ Less effort to bootstrap
-- ❌ Extra abstraction code = more complexity and bugs
-- ❌ Abstract Arduino SDK cannot make ESP32 assumptions
-- ❌ Less control over hardware, especially important given resource+power constraints
+So what's are the tradeoffs of using Arduino instead of ESP-IDF directly?
 
-The ESP-IDF is still a high-level framework, and is extremely well [documented](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html).
+- ✅ Arduino is a familiar SDK
+- ✅ Arduino is compatible with different hardware
+- ✅ Arduino can be lower effort to bootstrap using the IDE
+- ❌ Arduino core abstraction layer means more code, complexity, and room for bugs
+- ❌ Arduino core APIs cannot make ESP32 assumptions, making hardware optimization more complex
 
-Some ESP-IDF [Bitclock](https://github.com/goat-hill/bitclock) could leverage include:
+For the Bitclock project, hardware cross-compatibility was not a priority. Instead, hardware _control_ was more important especially given the hardware constraints of:
+
+- 400kB memory
+- 8 MB flash
+- Single core to multi-task display + sensors + networking
+
+On the other hand, the ESP-IDF framework offers equivalent [high and low level APIs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html), and is very well documented.
+
+Some of the ESP-IDF features Bitclock leverages include:
 
 - [freertos](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos.html) - Multi-threading for better display performance
 - [ota](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ota.html) - OTA firmware updates via Wi-Fi or bluetooth
 - [partitions](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html) - For custom layouts of flash memory
 - [bt](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/index.html) - Bluetooth + BLE applications
 
-The Bitclock project was already commited to using ESP32 modules, so there wasn't much benefit to using anything generic. As such, the decision was made to commit to the ESP-IDF framework.
+Given this, the decision was made to use ESP-IDF directly and bypass the Arduino abstraction.
 
-#### Graduating from Arduino IDE
+#### Graduating from Arduino IDE to VSCode
 
-While it was decided that Bitclock would use ESP-IDF as opposed to Arduino, there was still a decision to make about the IDE.
+With the SDK decision settled for Bitclock, there was an open question about the IDE choice.
 
-VSCode was my preferred choice here. Why?
+Previous embedded projects I worked on used the Arduino IDE, but that no longer seemed the best option given the ESP-IDF choice. VSCode was the editor I use for most other programming projects, and has many appealing features:
 
-- Strong IDE support for C and C++ development
-- Extremely performant
-- Supports multiple files + directories way better then Arduino IDE
-- Free
-- Backed by Microsoft
-- Integrates with Github Copilot which can [speed up development tasks](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
+- Strong IDE support for [C and C++ development](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+- Performant editor not bloated with features
+- Better support for files and directories (as opposed to Arduino IDE)
+- Free + corporate backing by Microsoft
+- Integrates Github Copilot which can [speed up development](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
 
-That said, The Arduino IDE makes it very easy to boostrap and debug embedded projects. It was important for the Bitclock project to have a developer environment with equivalent functionality for:
+In order to make the switch to VSCode, it was necessary to ensure that in VSCode I could keep a few core developer features of the Arduino IDE:
 
-1. **Simple build + run + serial log monitoring**
-2. **Static analysis + code completion**
+1. **Compile + flash + serial log monitoring**
+2. **Static code analysis + code completion**
 3. **Interactive GDB debugging**
 
 It turns out this is all possible within VSCode, but does require a bit more setup work, which I will outline in the remainder of this post.
 
-#### A note on PlatformIO
+#### Evaluating PlatformIO
 
-[PlatformIO](https://platformio.org/) is a popular project for ESP32 development within VSCode.
+[PlatformIO](https://platformio.org/) is a popular VSCode extension for ESP32 development within VSCode.
+While it is a functional solution for ESP-IDF development, I ultimately chose against using it.
 
-I first evaluated using that, but I did not find that it met the first requirement of _Minimize abstractions_. The VSCode extension it requires adds a lot of visual and functional bloat to the VSCode editor that I found unnecessary through the setup described later in this post.
+My first impression after install that it felt like installing a bloated IDE within VSCode, as opposed to being a precise tool for the specific functionality needed like build + run + debug.
+
+<InlineImage
+  src={PlatformioImage}
+  alt="PlatformIO screenshot"
+  label="VSCode after PlatformIO extension installed"
+/>
+
+PlatformIO just felt a bit heavy-weight for my preference and perhaps triggered some past trauma of working with larger IDEs like Eclipse & Xcode.
+
+Fortunately, there is an alternative way to get the functionality I desired using only VSCode, the [C/C++ extension by Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and the [ESP-IDF](https://github.com/espressif/esp-idf) toolchain.
 
 ### ESP-IDF toolchain setup
 
-To start a project with ESP-IDF, you'll first need to install the ESP-IDF toolchain. Follow the [instructions on the Espressif website here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/linux-macos-setup.html).
+In order to start developing with ESP-IDF, you'll first need to install the ESP-IDF toolchain. Follow the [instructions on the Espressif website here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/linux-macos-setup.html).
 
 On macOS, you'll need create a directory to install the SDK to and the process goes something like this:
 
