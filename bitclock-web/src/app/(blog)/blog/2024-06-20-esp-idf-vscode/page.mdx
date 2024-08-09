@@ -39,9 +39,9 @@ export const metadata = {
 
 <Paper shadow="xs" px="md" py="xs" mt="xl">
 
-Many electronics hobbyists begin with the Arduino ecosystem. My situation was no different.
+Many electronics hobbyists begin with the Arduino ecosystem. That's how I got started!
 
-My first project was an iPhone camera-tripod mount that could pivot via a motor. Early iterations used an [Arduino Nano 33 BLE](https://store.arduino.cc/products/arduino-nano-33-ble), a [servo motor](https://www.amazon.com/gp/product/B09BV5D7MD/), and 4x AA batteries.
+My first project was a tripod mount that could hold an iPhone for filming and pan using a motor. Early iterations used an [Arduino Nano 33 BLE](https://store.arduino.cc/products/arduino-nano-33-ble), a [servo motor](https://www.amazon.com/gp/product/B09BV5D7MD/), and 4x AA batteries.
 
 <InlineVideo
   src="/videos/vscode-arduino.mp4"
@@ -50,13 +50,15 @@ My first project was an iPhone camera-tripod mount that could pivot via a motor.
   autoplay
 />
 
-When writing firmware for this project it made sense to start with the Arduino hardware, IDE, and SDK.
+When writing firmware for the Arduino Nano, I started with the Android IDE + SDK.
 
 The code for communicating over Bluetooth and controlling the servo fit into a few hundred line `.ino` sketch file.
-The wiring was pretty straightforward and only needed a few pins connected.
+The wiring was pretty straightforward and only needed a few pins connected. The Arduino [Servo](https://www.arduino.cc/reference/en/libraries/servo/)
+library for motor control and [ArduinoBLE](https://www.arduino.cc/reference/en/libraries/arduinoble/) for comms made it easy to implement.
 
-In future projects, my electronics requirements became increasingly complex. The [Bitclock](https://bitclock.io) project
+When I finished working on that project, I moved to increasingly complex projects. The [Bitclock](https://bitclock.io) project
 needed to connect to an e-ink screen, mount three I2C sensors, and fit into a tiny enclosure.
+At this point, I was looking to graduate from the Arduino Nano and hand soldering everything together.
 
 <InlineImage
   src={BitclockImage}
@@ -65,12 +67,12 @@ needed to connect to an e-ink screen, mount three I2C sensors, and fit into a ti
 />
 
 To meet these requirements I decided to design a custom PCB (printed circuit board).
-By using a custom PCB, the device could have a much smaller electronics footprint that would fit snugly into an enclosure.
-Manufacturing the product at scale would also be simplified through PCB assembly services
+By designing a PCB specific to the device, Bitclock electronics could have a smaller footprint that would fit snugly into an enclosure.
+Additionally, manufacturing the product at scale would be simplified through PCB assembly services
 like 🇨🇳 [JLCPCB](https://jlcpcb.com/), [PCBWay](https://www.pcbway.com/), or 🇺🇸 [MacroFab](https://www.macrofab.com/).
 
-I should add that one of my main goals when starting [Bitclock](https://bitclock.io) was to learn custom PCB design,
-so landing there was somewhat predetermined!
+I should disclose that one of my main goals when starting [Bitclock](https://bitclock.io) was to learn custom PCB design,
+so my approach was going to end up there anyway!
 
 <InlineImage
   src={BitclockPcbImage}
@@ -79,9 +81,9 @@ so landing there was somewhat predetermined!
   priority
 />
 
-An early question when designing [Bitclock](https://bitclock.io) was which microcontoller to use.
+An early question when designing [Bitclock](https://bitclock.io) was which microcontroller to use.
 
-I settled on the [ESP32-S3](https://www.espressif.com/en/products/socs/esp32-s3) module mounted to the top of the PCB. These ESP32 SoC (system-on-a-chip) modules are popular for a few reasons:
+I settled on the [ESP32-S3](https://www.espressif.com/en/products/socs/esp32-s3) module, which you can see mounted to the top-right corner of the PCB. These ESP32 SoC (system-on-a-chip) modules are popular for a few reasons:
 
 - **All-in-one**: Built-in Wi-Fi, Bluetooth, and flash simplifies PCB design
 - **Low price**: Modules starting at [~$1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-C3-MINI-1-N4/13877574), dev boards for [~$10](https://www.amazon.com/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF/)
@@ -91,26 +93,23 @@ I settled on the [ESP32-S3](https://www.espressif.com/en/products/socs/esp32-s3)
 - **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others making products easier to sell
 
 With the [Bitclock](https://bitclock.io) project, my firmware grew to thousands of lines and many files.
-I needed to render graphics for a display, communicate over bluetooth + Wi-Fi, communicate with sensors.
-This multi-tasking needed to happen all on a single core, with memory and flash constraints.
+The firmware needed to render graphics for a display, communicate over bluetooth + Wi-Fi, communicate with sensors.
+These features needed to multi-task on a single core and meet the constrained memory & flash of the ESP32.
 
 While you can technically write code for ESP32 using the Arduino IDE + SDK, I settled an alternative approach for this project
 using Espressif's [**ESP-IDF framework**](https://github.com/espressif/esp-idf).
 
-In this post, I share the developer environment used for the [Bitclock](https://bitclock.io) project that I've found to work well.
+### Switching to ESP-IDF
 
-### ESP-IDF vs Arduino SDK
+Technically, you *can* program an ESP32 using Arduino IDE & SDK.
 
-For a simple "blinking LED" app, the Arduino SDK can be the fastest way to get started.
-The generic SDK allows code to be (mostly) hardware-agnostic via per-hardware ports known as [**Arduino Cores**](https://github.com/arduino/ArduinoCore-API).
+The generic Arduino toolchain supports different hardware platforms through [**Arduino Cores**](https://github.com/arduino/ArduinoCore-API).
+Each Arduino Core implements the standard APIs like [Serial](https://www.arduino.cc/reference/en/language/functions/communication/serial/) and [Wire](https://www.arduino.cc/reference/en/language/functions/communication/wire/).
+In the case of ESP32 devices, Espressif
+actively maintains the [arduino-esp32](https://github.com/espressif/arduino-esp32) core implementation.
 
-Each Arduino Core implements the basic APIs like [Serial](https://www.arduino.cc/reference/en/language/functions/communication/serial/)
-and a collection of Arduino [libraries](https://www.arduino.cc/reference/en/libraries/) like [Wire](https://www.arduino.cc/reference/en/language/functions/communication/wire/) &
-[WiFi](https://www.arduino.cc/reference/en/libraries/wifi/) for their respective hardware platforms. In the case of ESP32 devices, Espressif
-maintains the [arduino-esp32](https://github.com/espressif/arduino-esp32) core implementation.
-
-Under the hood, the [arduino-esp32](https://github.com/espressif/arduino-esp32) core is built on the [**ESP-IDF framework**](https://github.com/espressif/esp-idf).
-Whereas Arduino is a generic APIs for many types of embedded devices, ESP-IDF is scoped more narrowly and can make API assumptions for Espressif hardware.
+Under the hood, the [arduino-esp32](https://github.com/espressif/arduino-esp32) core is largely implemented using the [**ESP-IDF framework**](https://github.com/espressif/esp-idf).
+The ESP-IDF framework was developed specifically for ESP32 SoCs, and has many features and APIs specific to that family of devices.
 
 <InlineImage
   src={ArduinoCoreImage}
@@ -118,19 +117,13 @@ Whereas Arduino is a generic APIs for many types of embedded devices, ESP-IDF is
   label="arduino-esp32 is implemented using ESP-IDF"
 />
 
-Let's consider the case of enabling Wi-Fi. Using Arduino libraries, you would do the following:
-
-```c
-asdf
-```
-
-So what's are the tradeoffs of using Arduino instead of ESP-IDF directly?
+This brought about a major design decision for [Bitclock](https://bitclock.io). Continue using the generic and familiar Arduino SDKs, or switch to the manufacturer's ESP-IDF framework?
 
 - ✅ Arduino is a familiar SDK
 - ✅ Arduino is compatible with different hardware
 - ✅ Arduino can be lower effort to bootstrap using the IDE
-- ❌ Arduino core abstraction layer means more code, complexity, and room for bugs
-- ❌ Arduino core APIs cannot make ESP32 assumptions, making hardware optimization more complex
+- ❌ Arduino core abstraction layer means more code. Extra code could lead to unnecessary complexity and bugs.
+- ❌ Arduino cores cannot make ESP32-specific assumptions. This could precise device control more difficult.
 
 For the Bitclock project, hardware cross-compatibility was not a priority. Instead, hardware _control_ was more important especially given the hardware constraints of:
 
@@ -147,34 +140,31 @@ Some of the ESP-IDF features Bitclock leverages include:
 - [partitions](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html) - For custom layouts of flash memory
 - [bt](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/bluetooth/index.html) - Bluetooth + BLE applications
 
-Given this, the decision was made to use ESP-IDF directly and bypass the Arduino abstraction.
+Given the above, I decided to use ESP-IDF directly and bypass the Arduino abstraction.
 
-#### Graduating from Arduino IDE to VSCode
+### Switching to VSCode
 
-With the SDK decision settled for Bitclock, there was an open question about the IDE choice.
-
-Previous embedded projects I worked on used the Arduino IDE, but that no longer seemed the best option given the ESP-IDF choice. VSCode was the editor I use for most other programming projects, and has many appealing features:
+While I had enjoyed using the Arduino IDE previously, it no longer seemed the obvious choice given the ESP-IDF choice. VSCode was the general code editor I used the most, and has many appealing features:
 
 - Strong IDE support for [C and C++ development](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
-- Performant editor not bloated with features
-- Better support for files and directories (as opposed to Arduino IDE)
-- Free + corporate backing by Microsoft
+- Performant and streamlined text editor
+- As opposed to Arduino IDE: better support for files and directories
+- Free. Corporate backing by Microsoft
 - Integrates Github Copilot which can [speed up development](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
 
-In order to make the switch to VSCode, it was necessary to ensure that in VSCode I could keep a few core developer features of the Arduino IDE:
+In order to make the switch to VSCode, it was necessary to ensure that I would have replacements for a few crucial Arduino IDE features:
 
-1. **Compile + flash + serial log monitoring**
-2. **Static code analysis + code completion**
-3. **Interactive GDB debugging**
+1. Compile + flash + serial log monitoring
+2. Static code analysis + code completion
+3. Interactive GDB debugging
 
-It turns out this is all possible within VSCode, but does require a bit more setup work, which I will outline in the remainder of this post.
+[PlatformIO](https://platformio.org/) is a popular VSCode extension that supports all of these features, so I experimented with that before ultimately deciding not to use it and instead configure VSCode manually.
 
 #### Evaluating PlatformIO
 
-[PlatformIO](https://platformio.org/) is a popular VSCode extension for ESP32 development within VSCode.
-While it is a functional solution for ESP-IDF development, I ultimately chose against using it.
+On paper, PlatformIO supported all the features I wanted for embedded development in VSCode. I'd be able to compile, flash, debug, and get static analysis of my code.
 
-My first impression after install that it felt like installing a bloated IDE within VSCode, as opposed to being a precise tool for the specific functionality needed like build + run + debug.
+However, after installing the extension I was less enthused. I was greeted with a landing page showing news, social links, and project creation wizards. It's certainly a personal preference, but PlatformIO was delivering me an entire IDE-within-IDE when I was looking for a few basic features.
 
 <InlineImage
   src={PlatformioImage}
@@ -182,9 +172,7 @@ My first impression after install that it felt like installing a bloated IDE wit
   label="VSCode after PlatformIO extension installed"
 />
 
-PlatformIO just felt a bit heavy-weight for my preference and perhaps triggered some past trauma of working with larger IDEs like Eclipse & Xcode.
-
-Fortunately, there is an alternative way to get the functionality I desired using only VSCode, the [C/C++ extension by Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and the [ESP-IDF](https://github.com/espressif/esp-idf) toolchain.
+Fortunately, there is an alternative way to get the functionality I desired using only VSCode, the [C/C++ extension by Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and the [ESP-IDF](https://github.com/espressif/esp-idf) CLI toolchain.
 
 ### ESP-IDF toolchain setup
 
