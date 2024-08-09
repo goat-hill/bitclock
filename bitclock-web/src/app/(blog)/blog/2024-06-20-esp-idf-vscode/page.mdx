@@ -6,12 +6,13 @@ import BitclockBannerImage from "./banner.png";
 import BitclockImage from "@/app/img/bitclock.jpg";
 import BitclockPcbImage from "@/app/img/pcb.jpg";
 import PlatformioImage from "./platformio.png";
+import ArduinoCoreImage from "./arduino-core.png";
 
 export const metadata = {
   // author: "Brady Law",
   // date: "2024-06-20",
   title: "Advanced ESP32 development with ESP-IDF",
-  description: "For embedded projects that outgrow Arduino",
+  description: "For electronics projects that outgrow Arduino",
   // bannerImage: BannerImage,
   // tags: ["esp32", "esp-idf", "fimrware"]
 };
@@ -37,40 +38,91 @@ export const metadata = {
 </Title>
 
 <Paper shadow="xs" px="md" py="xs" mt="xl">
-Many hobbyist electronics projects, including [Bitclock](https://github.com/goat-hill/bitclock), use ESP32 modules to power their devices.
 
-These SoC (system-on-a-chip) components are popular for a variety of reasons:
+Many electronics hobbyists begin with the Arduino ecosystem. My situation was no different.
 
-- **Simplicity**: Built-in Wi-Fi, Bluetooth, antenna and flash
-- **Low price**: Modules for [~$1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-C3-MINI-1-N4/13877574), dev boards for [~$10](https://www.amazon.com/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF/)
-- **SDK**: Extensive development framework and high quality [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html)
-- **Low power consumption**: Can operate in the 10s of mA or sleep in µA
-- **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others so it's easier to sell
+My first project was an iPhone camera-tripod mount that could pivot via a motor. Early iterations used an [Arduino Nano 33 BLE](https://store.arduino.cc/products/arduino-nano-33-ble), a [servo motor](https://www.amazon.com/gp/product/B09BV5D7MD/), and 4x AA batteries.
+
+<InlineVideo
+  src="/videos/vscode-arduino.mp4"
+  label="Arduino controlling a servo motor"
+  loop
+  autoplay
+/>
+
+When writing firmware for this project it made sense to start with the Arduino hardware, IDE, and SDK.
+
+The code for communicating over Bluetooth and controlling the servo fit into a few hundred line `.ino` sketch file.
+The wiring was pretty straightforward and only needed a few pins connected.
+
+In future projects, my electronics requirements became increasingly complex. The [Bitclock](https://bitclock.io) project
+needed to connect to an e-ink screen, mount three I2C sensors, and fit into a tiny enclosure.
+
+<InlineImage
+  src={BitclockImage}
+  alt="Bitclock photo"
+  label="Bitclock - E-ink clock + air quality monitor"
+/>
+
+To meet these requirements I decided to design a custom PCB (printed circuit board).
+By using a custom PCB, the device could have a much smaller electronics footprint that would fit snugly into an enclosure.
+Manufacturing the product at scale would also be simplified through PCB assembly services
+like 🇨🇳 [JLCPCB](https://jlcpcb.com/), [PCBWay](https://www.pcbway.com/), or 🇺🇸 [MacroFab](https://www.macrofab.com/).
+
+I should add that one of my main goals when starting [Bitclock](https://bitclock.io) was to learn custom PCB design,
+so landing there was somewhat predetermined!
 
 <InlineImage
   src={BitclockPcbImage}
   alt="Bitclock PCB photo"
-  label="Bitclock PCB - Powered by ESP32-S3"
+  label="Bitclock PCB assembly, featuring an ESP32-S3 microcontroller"
+  priority
 />
 
-When starting these projects, developers may be drawn to the familiar Arduino SDK. However, as projects grow in complexity the Arduino ecosystem may no longer be the best choice.
+An early question when designing [Bitclock](https://bitclock.io) was which microcontoller to use.
 
-In this post, I'll outline a more advanced firmware development setup using the Espressif **ESP-IDF SDK**, alongside **VSCode** as the IDE. This setup has proven effective for the [Bitclock](https://github.com/goat-hill/bitclock) open-source project.
+I settled on the [ESP32-S3](https://www.espressif.com/en/products/socs/esp32-s3) module mounted to the top of the PCB. These ESP32 SoC (system-on-a-chip) modules are popular for a few reasons:
 
-### Arduino vs ESP-IDF
+- **All-in-one**: Built-in Wi-Fi, Bluetooth, and flash simplifies PCB design
+- **Low price**: Modules starting at [~$1](https://www.digikey.com/en/products/detail/espressif-systems/ESP32-C3-MINI-1-N4/13877574), dev boards for [~$10](https://www.amazon.com/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF/)
+- **USB support**: Can be powered, flashed, and debugged over USB
+- **SDK**: Extensive development framework with high quality [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html)
+- **Low power**: Can operate in the 10s of mA, sleep in µA range
+- **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others making products easier to sell
 
-#### Arduino abstraction adds complexity, limits control
+With the [Bitclock](https://bitclock.io) project, my firmware grew to thousands of lines and many files.
+I needed to render graphics for a display, communicate over bluetooth + Wi-Fi, communicate with sensors.
+This multi-tasking needed to happen all on a single core, with memory and flash constraints.
 
-For a simple embedded app like a blinking LED, the Arduino SDK is a popular way to bootstrap projects.
-The generic SDK allows code to be hardware-agnostic, or at least partially.
-This is made possible through hardware-specific ports known as **Arduino Cores**.
+While you can technically write code for ESP32 using the Arduino IDE + SDK, I settled an alternative approach for this project
+using Espressif's [**ESP-IDF framework**](https://github.com/espressif/esp-idf).
 
-Each Arduino Core implements the core-level APIs of Arduino for their respective hardware platforms. In the case of ESP32 devices, Espressif
+In this post, I share the developer environment used for the [Bitclock](https://bitclock.io) project that I've found to work well.
+
+### ESP-IDF vs Arduino SDK
+
+For a simple "blinking LED" app, the Arduino SDK can be the fastest way to get started.
+The generic SDK allows code to be (mostly) hardware-agnostic via per-hardware ports known as [**Arduino Cores**](https://github.com/arduino/ArduinoCore-API).
+
+Each Arduino Core implements the basic APIs like [Serial](https://www.arduino.cc/reference/en/language/functions/communication/serial/)
+and a collection of Arduino [libraries](https://www.arduino.cc/reference/en/libraries/) like [Wire](https://www.arduino.cc/reference/en/language/functions/communication/wire/) &
+[WiFi](https://www.arduino.cc/reference/en/libraries/wifi/) for their respective hardware platforms. In the case of ESP32 devices, Espressif
 maintains the [arduino-esp32](https://github.com/espressif/arduino-esp32) core implementation.
 
-An alternative to using the Arduino SDK is the [**ESP-IDF framework**](https://github.com/espressif/esp-idf), developed by Espressif specifically for their ESP32 chips.
-Notably, the [arduino-esp32](https://github.com/espressif/arduino-esp32) core
-uses ESP-IDF under the hood and is an abstraction layer on top.
+Under the hood, the [arduino-esp32](https://github.com/espressif/arduino-esp32) core is built on the [**ESP-IDF framework**](https://github.com/espressif/esp-idf).
+Whereas Arduino is a generic APIs for many types of embedded devices, ESP-IDF is scoped more narrowly and can make API assumptions for Espressif hardware.
+
+<InlineImage
+  src={ArduinoCoreImage}
+  alt="Demonstration of Arduino leveraging ESP-IDF"
+  label="arduino-esp32 is implemented using ESP-IDF"
+/>
+
+Let's consider the case of enabling Wi-Fi. Using Arduino libraries, you would do the following:
+
+```c
+asdf
+```
 
 So what's are the tradeoffs of using Arduino instead of ESP-IDF directly?
 
@@ -289,8 +341,6 @@ In future posts we'll go into:
 - Designing custom PCBs to fit 3D printed enclosures
 
 In the meantime, send any comments or development tips to brady@bitclock.io!
-
-<InlineImage src={BitclockImage} alt="Bitclock photo" />
 
 Also if you're interested in a cute desk clock + air quality monitor for your desk that inspired this post, order one at [bitclock.io](https://bitclock.io).
 It's completely open source and a fun hackable device to get started with ESP32 development.

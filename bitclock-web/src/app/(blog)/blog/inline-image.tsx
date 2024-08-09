@@ -1,19 +1,25 @@
 import React from "react";
 import NextImage from "next/image";
-import { Image } from "@mantine/core";
 
-import { Box, Flex, Text } from "@mantine/core";
+import { Box, Flex, Text, Image, rem } from "@mantine/core";
 
 interface InlineImageProps {
   src: typeof NextImage;
   alt: string;
   w?: typeof Box.w;
   label?: string;
+  priority?: boolean;
 }
 
 export default function InlineImage(props: InlineImageProps) {
   return (
-    <Flex direction="column" justify="center" align="center" gap="sm">
+    <Flex
+      direction="column"
+      justify="center"
+      align="center"
+      gap="sm"
+      my={rem(50)}
+    >
       <Box w={props.w ?? { base: "100%", sm: 600, md: 800 }}>
         <Image
           component={NextImage}
@@ -25,6 +31,7 @@ export default function InlineImage(props: InlineImageProps) {
           radius="md"
           fit="cover"
           mt="md"
+          priority={props.priority}
         />
       </Box>
       {props.label && (

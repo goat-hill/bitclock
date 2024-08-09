@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Flex, Text } from "@mantine/core";
+import { Box, Flex, Text, rem } from "@mantine/core";
 
 interface InlineVideoProps {
   src: string;
@@ -11,7 +11,7 @@ interface InlineVideoProps {
 
 export default function InlineVideo(props: InlineVideoProps) {
   return (
-    <Flex direction="column" justify="center" align="center" gap="sm">
+    <Flex direction="column" justify="center" align="center" gap="sm" my="xl">
       <Box w={{ base: "100%", sm: 600, md: 800 }}>
         <video
           width="100%"
