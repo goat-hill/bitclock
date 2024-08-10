@@ -96,7 +96,7 @@ I settled on the [ESP32-S3](https://www.espressif.com/en/products/socs/esp32-s3)
 - **Low power**: Can operate in the 10s of mA, sleep in µA range
 - **Pre-certification**: [Pre-certified](https://www.espressif.com/en/support/documents/certificates) by FCC and others making products easier to sell
 
-With the [Bitclock](https://bitclock.io) project, my firmware grew to thousands of lines and many files.
+With the [Bitclock](https://bitclock.io) project, my firmware grew to [thousands of lines](https://github.com/goat-hill/bitclock/tree/master/bitclock-fw/main) and many files.
 The firmware needed to render graphics for a display, communicate over bluetooth + Wi-Fi, communicate with sensors.
 These features needed to multi-task on a single core and meet the constrained memory & flash of the ESP32.
 
@@ -283,7 +283,7 @@ It does the following:
 - Sets `.includePath` to include the core libraries for IntelliSense, [component](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/build-system.html) libraries, and your project workspace
 - Sets `.browse.path` to include same libraries for the ["Tag Parser" of VSCode](https://code.visualstudio.com/docs/cpp/faq-cpp#_what-is-the-difference-between-includepath-and-browsepath)
 
-Make sure the paths match the locations of ESP-IDF's install location and `~/.espressif` workspace for your system. See the ESP-IDF [tools.json](https://github.com/espressif/esp-idf/blob/master/tools/tools.json) to see what version you should be pointing to. For example, ESP32-S3 uses the `extensa-esp-elf` compiler while ESP32-C3 uses `riscv32-esp-elf`.
+Make sure the paths match the locations of ESP-IDF's install location and `~/.espressif` workspace for your system. See the ESP-IDF [tools.json](https://github.com/espressif/esp-idf/blob/master/tools/tools.json) to see what version you should be pointing to. For example, ESP32-S3 uses the `xtensa-esp-elf` compiler while ESP32-C3 uses `riscv32-esp-elf`.
 
 To be honest, I'm not entirely sure how critical each of these fields is to IntelliSense but I do know that in its entirety the configuration worked for my project!
 I used the [Espressif's VSCode extension](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/C_CPP_CONFIGURATION.md) as a guide (yet another VSCode extension that I opted to skip and configure manually 🧘).
@@ -325,9 +325,7 @@ For Bitclock, the following [debugging configuration](https://code.visualstudio.
 }
 ```
 
-Make sure `.miDebuggerPath` points to your locally installed ESP-IDF toolchain and `.program` points to the `.elf` build of your project.
-
-See the ESP-IDF [tools.json](https://github.com/espressif/esp-idf/blob/master/tools/tools.json) to see what toolchain version you should be pointing to. For example, `ESP32-S3` uses the `xtensa` toolchain while `ESP32-C3` uses `riscv`.
+Make sure `.miDebuggerPath` points to the correct ESP-IDF toolchain for this project (see `tools.json` tip from above). Also ensure `.program` points to the `.elf` build of your project.
 
 Once setup, connect your ESP32 hardware, flash it with the latest version of your app, and start the local [OpenOCD](https://openocd.org/) server. This will start a debugging connection over USB with your device:
 
