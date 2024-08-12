@@ -1,4 +1,7 @@
 import { Paper, Title } from "@mantine/core";
+import InlineVideo from "@/app/(blog)/blog/inline-video";
+import InlineImage from "@/app/(blog)/blog/inline-image";
+import BitclockImage from "@/app/img/bitclock-white.jpg";
 
 export const metadata = {
   // author: "Brady Law",
@@ -17,6 +20,66 @@ export const metadata = {
 </Title>
 
 <Paper shadow="xs" px="md" py="xs" mt="xl">
+
+It can be difficult to put into words what makes e-ink technology *so appealing*.
+
+Now that we live in a world full of spectacular 4K+HDR displays demanding our attention,
+there's something unexpectedly delightful about a simple, 1-bit screen that blends into its surroundings.
+
+When designing [Bitclock](http://bitclock.io/), a small desk clock and air quality monitor, I wanted a minimalist
+display that could share a small amount of information without being distracting.
+
+<InlineImage
+  src={BitclockImage}
+  alt="Bitclock photo"
+  label="Bitclock - E-ink clock + air quality monitor"
+  priority
+/>
+
+E-ink displays, like those used on the Kindle, differ from typical LED screens used for your computer or phone
+in that they reflect light instead of emitting it.
+
+As
+
+I settled on [Pervasive Displays 2.71" fast-update display](https://www.pervasivedisplays.com/product/2-71-e-ink-displays/)
+
+## Bitclock e-ink hardware setup
+
+EE diagram
+
+Display mounting
+
+## Implementing the driver
+
+## Fast vs partial updates
+
+<InlineVideo
+  src="/videos/eink-full.mp4"
+  label="Full update (slower + image inversion)"
+  loop
+  autoplay
+/>
+
+
+<InlineVideo
+  src="/videos/eink-fast.mp4"
+  label="Fast update (faster + direct pixel updates)"
+  loop
+  autoplay
+/>
+
+
+Add ghosting photos and tips
+
+## Adding LVGL
+
+## Configuring for 1-bit
+
+### Fonts handling
+
+### Image handling
+
+##
 
 --Brady
 
