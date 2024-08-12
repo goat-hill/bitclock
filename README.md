@@ -40,6 +40,10 @@ See [bitclock-pcb/](bitclock-pcb/)
 
 <img src="https://github.com/goat-hill/bitclock/assets/220799/4e667f21-f8f4-497b-bb93-be5a299950ad" width="500" alt="KiCAD device PCB screenshot" />
 
+# Blog posts
+
+- [Advanced ESP32 development with ESP-IDF](https://bitclock.io/blog/esp-idf-vscode)
+
 # Contributing
 
 ## Pre-commit linting
