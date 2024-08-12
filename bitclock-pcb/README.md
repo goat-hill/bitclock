@@ -2,7 +2,7 @@
 
 To be open sourced later this year!
 
-Latest PCB version is [rev2](rev2/)
+Latest PCB version is [rev3a](rev3a/)
 
 ## JLCPCB ordering scripts
 
