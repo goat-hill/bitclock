@@ -8,7 +8,7 @@ Latest PCB version is [rev3a](rev3a/)
 
 Used for ordering from JLCPCB or MacroFab.
 
-See [https://github.com/babldev/kicad-jlcpcb-scripts](https://github.com/goat-hill/kicad-pcba-scripts)
+https://github.com/goat-hill/kicad-pcba-scripts
 
 ## Revision history
 
