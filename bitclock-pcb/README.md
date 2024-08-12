@@ -4,9 +4,11 @@ Each directory includes gerber + BOM files used for ordering from a PCBA service
 
 Latest PCB version is [rev3a](rev3a/)
 
-## JLCPCB ordering scripts
+## PCBA ordering scripts
 
-See https://github.com/babldev/kicad-jlcpcb-scripts
+Used for ordering from JLCPCB or MacroFab.
+
+See [https://github.com/babldev/kicad-jlcpcb-scripts](https://github.com/goat-hill/kicad-pcba-scripts)
 
 ## Revision history
 
