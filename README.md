@@ -3,7 +3,7 @@
 # bitclock
 Open source e-ink desk companion, clock, and air quality monitor.
 
-For sale in US @ https://bitclock.io
+Available for purchase in USA @ https://bitclock.io
 
 <img src="https://github.com/user-attachments/assets/a1be3895-0399-4e95-8b5f-d52c59792a22" width="500" alt="Bitclock photo" />
 
