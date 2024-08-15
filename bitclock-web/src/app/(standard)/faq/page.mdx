@@ -41,9 +41,9 @@ If your clockface requires networking or some other background work, I suggest c
 Bitclock uses three Sensirion factory calibrated sensors. See below for their reported accuracy.
 
 Device self-heating impacts temperature and relative humidity readings.
-To mitigate this, temperature and relative humidity are adjusted based on consistent offsets observed during testing.
+To mitigate this, temperature and relative humidity are adjusted based on consistent [offsets](https://github.com/goat-hill/bitclock/blob/a495f9582fb3601ba604b6d4db3fd6bbdfef9350/bitclock-fw/main/tasks/sht4x.c#L98-L112) observed during testing.
 
-As a reuslt, if Bitclock is not in normal operation (consistently on and connected to Wi-Fi) you may observe inaccurate measurements. If you tweak the code and the device uses more or less power, this can also slightly impact sensor accuracy.
+If Bitclock is not in normal operation (consistently on and connected to Wi-Fi) you may observe inaccurate measurements. If you tweak the code and the device uses more or less power, this can also slightly impact sensor accuracy.
 
 VOC, NOx, and CO2 readings are relative sensors that auto-calibrate over time to the surrounding environment. The CO2 sensor, for example, expects "fresh air" levels of CO2 at least once per week and calibrates to that level.
 
