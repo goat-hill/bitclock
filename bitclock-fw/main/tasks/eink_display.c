@@ -519,6 +519,7 @@ void eink_task_run(void *pvParameters) {
     aqi_data.nox_index = sgp41_current_nox_index();
 
     lv_helper_view_mode_aqi_data.temp_celsius = aqi_data.temp_celsius;
+    lv_helper_view_mode_aqi_data.humidity_pct = aqi_data.humidity;
     lv_helper_view_mode_aqi_data.co2_ppm = aqi_data.co2_ppm;
     lv_helper_view_mode_aqi_data.voc_index = aqi_data.voc_index;
     lv_helper_view_mode_aqi_data.nox_index = aqi_data.nox_index;
