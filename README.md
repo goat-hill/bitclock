@@ -45,6 +45,21 @@ See [bitclock-pcb/](bitclock-pcb/)
 
 # Contributing
 
+## Cloning the repo
+
+This repo uses git submodules. Make sure to use `git clone --recursive`.
+
+```sh
+git clone --recursive git@github.com:goat-hill/bitclock.git
+```
+
+If the repo was previously checked out without `--recursive`, initialize the submodules.
+
+```sh
+git submodule init
+git submodule update
+```
+
 ## Pre-commit linting
 
 A single pre-commit config is created for this monorepo. Set up the hooks to get linting on every commit.
