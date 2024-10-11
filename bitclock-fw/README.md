@@ -6,6 +6,18 @@
 
 [esp-idf](https://github.com/espressif/esp-idf) (the ESP32 development framework) needs to be installed separately before building the firmware.
 
+Bash shell
+
+```fish
+brew install cmake ninja dfu-util python@3.12
+brew reinstall openssl
+git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
+./install.sh esp32s3
+source export.sh
+```
+
+Fish shell
+
 ```fish
 brew install cmake ninja dfu-util python@3.12
 brew reinstall openssl
@@ -15,6 +27,14 @@ source export.fish
 ```
 
 ### Entering esp-idf environment
+
+Bash shell
+
+```sh
+source ~/path-to-esp-idf/export.sh
+```
+
+Fish shell
 
 ```fish
 source ~/path-to-esp-idf/export.fish
