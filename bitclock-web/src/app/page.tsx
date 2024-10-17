@@ -80,12 +80,10 @@ export default function Home() {
         <Image
           component={NextImage}
           src={BitclockImage}
-          w="100%"
-          width={928}
-          h="auto"
           alt="Two Bitclock devices on a desk"
           radius="md"
-          fit="contain"
+          width={928}
+          h="auto"
           priority
         />
         <Box
