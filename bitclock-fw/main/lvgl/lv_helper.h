@@ -19,7 +19,3 @@ uint32_t lv_tick_cb();
 void lv_helper_styles_init();
 void lv_helper_set_view_mode(view_mode_t view_mode);
 void lv_helper_update();
-
-// Functions shared between weather and clock views
-lv_obj_t* create_label(lv_obj_t *parent, const lv_style_t *style, lv_align_t align, int x_offset, int y_offset);
-void format_time_and_date(struct tm *timeinfo, bool hour24, char *time_label_str, size_t time_label_size, char *time_sublabel_str, size_t time_sublabel_size);

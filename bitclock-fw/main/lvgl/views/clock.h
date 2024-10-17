@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <time.h>
-#include "lv_helper.h"
 
 typedef struct {
   time_t curtime;

@@ -41,7 +41,7 @@ void lv_helper_weather_create() {
   temp_high_label = create_label(screen, &small_number_style, LV_ALIGN_LEFT_MID, 132 + 4, -30 + y_offset);
   temp_low_label = create_label(screen, &small_number_style, LV_ALIGN_LEFT_MID, 132 + 4, 30 + y_offset);
   time_label = create_label(screen, &sublabel_style, LV_ALIGN_TOP_RIGHT, -10, 10);
-  time_sublabel = create_label(screen, &sublabel_style, LV_ALIGN_CENTER, 0, 60);
+  time_sublabel = create_label(screen, &sublabel_style, LV_ALIGN_BOTTOM_MID, 0, - y_offset);
 
   lv_helper_aqi_alert_create(false);
 
