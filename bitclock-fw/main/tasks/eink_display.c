@@ -548,6 +548,7 @@ void eink_task_run(void *pvParameters) {
     }
 
     lv_helper_view_mode_passkey_data.passkey = ble_active_passkey();
+    time(&lv_helper_view_mode_weather_data.curtime);
 
     lv_helper_view_mode_weather_data.icon = latest_weather.icon;
     lv_helper_view_mode_weather_data.temp_high =
