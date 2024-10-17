@@ -11,10 +11,10 @@ lv_helper_view_mode_clock_data_t lv_helper_view_mode_clock_data;
 static lv_obj_t *time_label;
 static lv_obj_t *time_sublabel;
 
+
 void lv_helper_clock_create() {
   time_label = create_label(lv_screen_active(), &large_number_style, LV_ALIGN_CENTER, 0, 0);
   time_sublabel = create_label(lv_screen_active(), &sublabel_style, LV_ALIGN_CENTER, 0, 60);
-
   lv_helper_aqi_alert_create(true);
 }
 

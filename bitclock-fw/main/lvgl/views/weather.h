@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "libs/weather_api.h"
+#include "lv_helper.h"
 
 typedef struct {
   weather_icon_t icon;
