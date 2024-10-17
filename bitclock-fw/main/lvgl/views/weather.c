@@ -97,19 +97,18 @@ void lv_helper_weather_update(lv_helper_view_mode_weather_data_t *data) {
     }
 
     active_icon = data->icon;
-
-    // Update the time label
-    static struct tm timeinfo;
-    localtime_r(&data->curtime, &timeinfo);
-
-    static char time_label_str[6];
-    static char time_sublabel_str[30];
-
-    format_time_and_date(&timeinfo, data->hour24, time_label_str, sizeof(time_label_str), time_sublabel_str, sizeof(time_sublabel_str));
-    set_text_if_changed(time_label, time_label_str);
-    set_text_if_changed(time_sublabel, time_sublabel_str);
-
   }
+
+  // Update the time label
+  static struct tm timeinfo;
+  localtime_r(&data->curtime, &timeinfo);
+
+  static char time_label_str[6];
+  static char time_sublabel_str[30];
+
+  format_time_and_date(&timeinfo, data->hour24, time_label_str, sizeof(time_label_str), time_sublabel_str, sizeof(time_sublabel_str));
+  set_text_if_changed(time_label, time_label_str);
+  set_text_if_changed(time_sublabel, time_sublabel_str);
 
   lv_helper_aqi_alert_update(&lv_helper_aqi_alert_data);
 
