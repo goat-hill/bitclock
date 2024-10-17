@@ -11,5 +11,8 @@
         "mutex": "c",
         "limits": "c",
         "cstdio": "c"
-    }
+    },
+    "idf.adapterTargetName": "esp32s3",
+    "idf.flashType": "UART",
+    "idf.port": "/dev/tty.usbmodem2101"
 }

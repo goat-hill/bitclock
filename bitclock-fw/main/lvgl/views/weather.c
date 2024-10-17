@@ -3,6 +3,7 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/styles.h"
 #include "lvgl/utils.h"
+#include "helper.h"
 
 lv_helper_view_mode_weather_data_t lv_helper_view_mode_weather_data;
 
@@ -18,6 +19,8 @@ LV_IMAGE_DECLARE(material_thunderstorm);
 
 static lv_obj_t *temp_high_label;
 static lv_obj_t *temp_low_label;
+static lv_obj_t *time_label;
+static lv_obj_t *time_sublabel;
 
 static lv_obj_t *weather_icon;
 
@@ -35,13 +38,10 @@ void lv_helper_weather_create() {
   lv_obj_align(weather_icon, LV_ALIGN_CENTER, -66 + 2, 0 + y_offset);
   lv_image_set_antialias(weather_icon, false);
 
-  temp_high_label = lv_label_create(screen);
-  lv_obj_add_style(temp_high_label, &medium_number_style, LV_PART_MAIN);
-  lv_obj_align(temp_high_label, LV_ALIGN_LEFT_MID, 132 + 4, -30 + y_offset);
-
-  temp_low_label = lv_label_create(screen);
-  lv_obj_add_style(temp_low_label, &small_number_style, LV_PART_MAIN);
-  lv_obj_align(temp_low_label, LV_ALIGN_LEFT_MID, 132 + 4, 30 + y_offset);
+  temp_high_label = create_label(screen, &small_number_style, LV_ALIGN_LEFT_MID, 132 + 4, -30 + y_offset);
+  temp_low_label = create_label(screen, &small_number_style, LV_ALIGN_LEFT_MID, 132 + 4, 30 + y_offset);
+  time_label = create_label(screen, &sublabel_style, LV_ALIGN_TOP_RIGHT, -10, 10);
+  time_sublabel = create_label(screen, &sublabel_style, LV_ALIGN_CENTER, 0, 60);
 
   lv_helper_aqi_alert_create(false);
 
@@ -97,6 +97,18 @@ void lv_helper_weather_update(lv_helper_view_mode_weather_data_t *data) {
     }
 
     active_icon = data->icon;
+
+    // Update the time label
+    static struct tm timeinfo;
+    localtime_r(&data->curtime, &timeinfo);
+
+    static char time_label_str[6];
+    static char time_sublabel_str[30];
+
+    format_time_and_date(&timeinfo, data->hour24, time_label_str, sizeof(time_label_str), time_sublabel_str, sizeof(time_sublabel_str));
+    set_text_if_changed(time_label, time_label_str);
+    set_text_if_changed(time_sublabel, time_sublabel_str);
+
   }
 
   lv_helper_aqi_alert_update(&lv_helper_aqi_alert_data);

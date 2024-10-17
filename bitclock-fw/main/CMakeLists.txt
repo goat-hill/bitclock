@@ -32,6 +32,7 @@ idf_component_register(
     "lvgl/views/aqi_alert.c"
     "lvgl/views/aqi_grid.c"
     "lvgl/views/clock.c"
+    "lvgl/views/helper.c"
     "lvgl/views/logo.c"
     "lvgl/views/passkey.c"
     "lvgl/views/weather.c"
