@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 // FIXME: Move these task dependencies to libs
+#include "tasks/mqtt.h"
 #include "tasks/scd4x.h"
 #include "tasks/sgp4x.h"
 #include "tasks/sht4x.h"
@@ -105,6 +106,12 @@ static const ble_uuid128_t gatt_svr_chr_weather_path_uuid =
 uint16_t gatt_svr_chr_weather_path_val_handle;
 char gatt_svr_chr_weather_path_val[64];
 
+static const ble_uuid128_t gatt_svr_chr_mqtt_url_uuid =
+    BLE_UUID128_INIT(0x2a, 0xb4, 0x8c, 0x15, 0x93, 0x4d, 0x11, 0xec, 0xb9, 0x0a,
+                     0x80, 0x27, 0x48, 0xc2, 0x7b, 0x9e);
+uint16_t gatt_svr_chr_mqtt_url_val_handle;
+char gatt_svr_chr_mqtt_url_val[64];
+
 static int gatt_svc_access(uint16_t conn_handle, uint16_t attr_handle,
                            struct ble_gatt_access_ctxt *ctxt, void *arg);
 
@@ -158,6 +165,15 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
                              BLE_GATT_CHR_F_READ_ENC |
                              BLE_GATT_CHR_F_READ_AUTHEN,
                     .val_handle = &gatt_svr_chr_weather_path_val_handle,
+                },
+                {
+                    .uuid = &gatt_svr_chr_mqtt_url_uuid.u,
+                    .access_cb = gatt_svc_access,
+                    .flags = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_ENC |
+                             BLE_GATT_CHR_F_WRITE_AUTHEN | BLE_GATT_CHR_F_READ |
+                             BLE_GATT_CHR_F_READ_ENC |
+                             BLE_GATT_CHR_F_READ_AUTHEN,
+                    .val_handle = &gatt_svr_chr_mqtt_url_val_handle,
                 },
                 {
                     .uuid = &gatt_svr_chr_wifi_status_uuid.u,
@@ -382,6 +398,13 @@ static int gatt_svc_access(uint16_t conn_handle, uint16_t attr_handle,
       }
       rc = os_mbuf_append(ctxt->om, weather_path, strlen(weather_path));
       return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
+    } else if (attr_handle == gatt_svr_chr_mqtt_url_val_handle) {
+      const char *mqtt_url = bitclock_nvs_get_mqtt_url();
+      if (mqtt_url == NULL) {
+        mqtt_url = "";
+      }
+      rc = os_mbuf_append(ctxt->om, mqtt_url, strlen(mqtt_url));
+      return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
     } else if (attr_handle == gatt_svr_chr_wifi_status_val_handle) {
       static uint8_t wifi_status;
       wifi_status = (bitclock_wifi_is_started() ? WIFI_IS_STARTED : 0) |
@@ -456,6 +479,21 @@ static int gatt_svc_access(uint16_t conn_handle, uint16_t attr_handle,
       }
       xEventGroupSetBits(weather_event_group_handle,
                          WEATHER_EVENT_LOCATION_CHANGED);
+      return rc;
+    } else if (attr_handle == gatt_svr_chr_mqtt_url_val_handle) {
+      rc = gatt_svr_write(ctxt->om, // data
+                          1,        // min length
+                          sizeof(gatt_svr_chr_mqtt_url_val) -
+                              1, // max length - 1 for null terminator
+                          &gatt_svr_chr_mqtt_url_val, // dest
+                          &copy_len);
+      if (rc == 0) {
+        // Bluetooth doesn't add ending \0
+        gatt_svr_chr_mqtt_url_val[copy_len] = 0;
+        bitclock_nvs_set_mqtt_url(gatt_svr_chr_mqtt_url_val, copy_len + 1);
+      }
+      xEventGroupSetBits(weather_event_group_handle,
+                         MQTT_EVENT_URL_CHANGED);
       return rc;
     } else if (attr_handle == gatt_svr_chr_temperature_unit_val_handle) {
       rc = gatt_svr_write(

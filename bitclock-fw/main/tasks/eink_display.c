@@ -26,6 +26,7 @@
 #include "sgp4x.h"
 #include "sht4x.h"
 #include "tasks/ble.h"
+#include "tasks/mqtt.h"
 #include "tasks/weather.h"
 #include "tasks/wifi.h"
 #include <math.h>
@@ -584,6 +585,7 @@ void eink_task_run(void *pvParameters) {
       }
       eink_update();
       eink_power_off();
+
       display_sync_needed = false;
 
       frame_count++;

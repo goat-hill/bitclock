@@ -17,6 +17,7 @@ static bitclock_nvs_clock_format_val_t clock_format =
 static bitclock_nvs_app_selection_val_t app_selection =
     BITCLOCK_NVS_APP_SELECTION_VAL_NONE;
 
+static const char *mqtt_url_str = NULL;
 static const char *timezone_str = NULL;
 static const char *weather_path_str = NULL;
 
@@ -147,6 +148,29 @@ esp_err_t bitclock_nvs_set_weather_path(const char *weather_path, size_t size) {
   }
   // FIXME: Free the old string? Malloc for the new one?
   weather_path_str = weather_path;
+
+  nvs_close(handle);
+
+  return ESP_OK;
+}
+
+const char *bitclock_nvs_get_mqtt_url() { return mqtt_url_str; }
+
+esp_err_t bitclock_nvs_set_mqtt_url(const char *url, size_t size) {
+  nvs_handle_t handle;
+  esp_err_t err;
+
+  err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = nvs_set_blob(handle, NVS_ID_WEATHER_PATH, url, size);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  mqtt_url_str = url;
 
   nvs_close(handle);
 

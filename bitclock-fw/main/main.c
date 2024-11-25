@@ -22,6 +22,7 @@
 #include "tasks/sharp_display.h"
 #include "tasks/sht4x.h"
 #include "tasks/tasks.h"
+#include "tasks/mqtt.h"
 #include "tasks/weather.h"
 #include "tasks/wifi.h"
 
@@ -137,6 +138,16 @@ void app_main(void) {
                                   WEATHER_TASK_PRIORITY, // uxPriority
                                   weatherTaskStack,      // puxStackBuffer
                                   &weatherTaskBuffer     // pxTaskBuffer
+  );
+#endif
+
+#ifdef MQTT_TASK_ENABLED
+  mqttTask = xTaskCreateStatic(mqtt_task_run, "mqtt",
+                               MQTT_STACK_SIZE,    // ulStackDepth
+                               (void *)1,          // pvParamters
+                               MQTT_TASK_PRIORITY, // uxPriority
+                               mqttTaskStack,      // puxStackBuffer
+                               &mqttTaskBuffer     // pxTaskBuffer
   );
 #endif
 
