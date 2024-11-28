@@ -23,6 +23,7 @@ import ClockBlock from "./clock-block";
 import AqiBlock from "./aqi-block";
 import AppSelectionBlock from "./app-selection-block";
 import { IconBluetooth } from "@tabler/icons-react";
+import MqttBlock from "./mqtt-block";
 
 type GattAttributeParser<T> = {
   attributeId: number | string;
@@ -42,6 +43,7 @@ export default function Home() {
   const [timezone, setTimezone] = useState<string | null>(null);
   const [clockFormat, setClockFormat] = useState(0);
   const [weatherPath, setWeatherPath] = useState<string | null>(null);
+  const [mqttUrl, setMqttUrl] = useState<string | null>(null);
   const [wifiStatus, setWifiStatus] = useState<gatt.WifiStatus | null>(null);
   const [appSelection, setAppSelection] = useState(0);
 
@@ -73,6 +75,11 @@ export default function Home() {
       attributeId: gatt.CHR_WEATHER_PATH_UUID,
       parse: (value: DataView) => decoder.decode(value),
       setter: setWeatherPath,
+    },
+    {
+      attributeId: gatt.CHR_MQTT_URL_UUID,
+      parse: (value: DataView) => decoder.decode(value),
+      setter: setMqttUrl,
     },
     {
       attributeId: gatt.CHR_TIMEZONE_UUID,
@@ -274,6 +281,10 @@ export default function Home() {
             weatherPath={weatherPath}
             setWeatherPath={setWeatherPath}
           />
+
+          <Divider my="md" />
+
+          <MqttBlock bluetoothConnection={bluetoothConnection} mqttUrl={mqttUrl} setMqttUrl={setMqttUrl} />
 
           <Divider my="md" />
 
