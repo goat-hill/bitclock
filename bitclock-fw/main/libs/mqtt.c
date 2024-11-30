@@ -27,13 +27,13 @@ bool publish_message(const char *topic, const char *message, bool retain) {
 }
 
 bool publish_homeassistant_config(const char * name, const char * unique_id, const char * device_class, const char * unit_of_measurement, const char * state_class, const char * platform) {
-    snprintf(config_message, "{\"name\": \"%s\",\"unique_id\": \"%s\", \"device_class\": \"%s\", \"unit_of_measurement\": \"%s\",\"state_class\": \"%s\",\"platform\": \"%s\"}", name, unique_id, device_class, unit_of_measurement, state_class, platform);
-    snprintf(config_topic, "homeassistant/sensor/%s/config", unique_id);
+    snprintf(config_message, sizeof(config_message), "{\"name\": \"%s\",\"unique_id\": \"%s\", \"device_class\": \"%s\", \"unit_of_measurement\": \"%s\",\"state_class\": \"%s\",\"platform\": \"%s\"}", name, unique_id, device_class, unit_of_measurement, state_class, platform);
+    snprintf(config_topic, sizeof(config_topic), "homeassistant/sensor/%s/config", unique_id);
     return publish_message(config_topic, config_message, true);
 }
 
 bool publish_homeassistant_sensor(const char * unique_id, const char * state_message) {
-    snprintf(state_topic, "homeassistant/sensor/%s/state", unique_id);
+    snprintf(state_topic, sizeof(state_topic), "homeassistant/sensor/%s/state", unique_id);
     return publish_message(state_topic, state_message, true);
 }
 
