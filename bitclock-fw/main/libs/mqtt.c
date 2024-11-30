@@ -83,7 +83,7 @@ void send_homeassistant_mqtt_sensor_data(const char *mqtt_url,
                                      "temperature", "°C", "measurement",
                                      "sensor") &&
         publish_homeassistant_config("Bitclock Humidity", humidity_unique_id,
-                                     "humidity", "%%", "measurement", "sensor");
+                                     "humidity", "%", "measurement", "sensor");
     if (!configs_published) {
       ESP_LOGE(TAG, "Homeassistant configs failed to publish");
       return;
