@@ -38,15 +38,13 @@ export default function MqttBlock({
       return;
     }
 
-    // Trim everything except the url path, using library functions but keep preceding slash
-    const path = new URL(url).pathname;
-    const pathBuffer = new TextEncoder().encode(path);
+    const urlBuffer = new TextEncoder().encode(url);
     const chr = await bluetoothConnection.service.getCharacteristic(
       CHR_MQTT_URL_UUID,
     );
-    await chr.writeValueWithResponse(pathBuffer);
-    console.log("MQTT URL sent", path);
-    setMqttUrl(path);
+    await chr.writeValueWithResponse(urlBuffer);
+    console.log("MQTT URL sent", url);
+    setMqttUrl(url);
   };
   return (
     <>
