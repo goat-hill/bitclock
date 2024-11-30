@@ -26,7 +26,6 @@
 #include "sgp4x.h"
 #include "sht4x.h"
 #include "tasks/ble.h"
-#include "tasks/mqtt.h"
 #include "tasks/weather.h"
 #include "tasks/wifi.h"
 #include <math.h>

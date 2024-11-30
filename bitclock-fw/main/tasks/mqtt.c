@@ -43,7 +43,6 @@ void mqtt_task_run(void *pvParameters) {
 
     if (mqtt_url == NULL || strlen(mqtt_url) < 1) {
       ESP_LOGI(TAG, "No mqtt_url so ignoring");
-      delay_time = pdMS_TO_TICKS(1000 * 60); // 60 seconds
       continue;
     } else {
       ESP_LOGI(TAG, "MQTT URL: %s", mqtt_url);
@@ -51,7 +50,6 @@ void mqtt_task_run(void *pvParameters) {
 
     if (!bitclock_wifi_is_started()) {
       ESP_LOGW(TAG, "WiFi not started");
-      delay_time = pdMS_TO_TICKS(1000 * 5); // 5 seconds
       continue;
     }
 
@@ -65,9 +63,6 @@ void mqtt_task_run(void *pvParameters) {
 
       xSemaphoreGive(wifi_req_semaphore);
     }
-
-    // Send every 60 seconds
-    delay_time = pdMS_TO_TICKS(1000 * 60); 
   }
 }
 
