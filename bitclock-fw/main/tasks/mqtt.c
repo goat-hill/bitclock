@@ -59,14 +59,8 @@ void mqtt_task_run(void *pvParameters) {
 
     aqi_data_t aqi_data = {0};
     get_aqi_data(&aqi_data);
-
-    if (xSemaphoreTake(wifi_req_semaphore, 0)) {
-      send_homeassistant_mqtt_sensor_data(mqtt_url, &aqi_data);
-
-      xSemaphoreGive(wifi_req_semaphore);
-
-      delay_time = pdMS_TO_TICKS(60000);
-    }
+    send_homeassistant_mqtt_sensor_data(mqtt_url, &aqi_data);
+    delay_time = pdMS_TO_TICKS(60000);
   }
 }
 

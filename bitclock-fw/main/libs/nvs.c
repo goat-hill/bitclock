@@ -9,6 +9,7 @@ static const char *NVS_ID_TIMEZONE = "tz";
 static const char *NVS_ID_TEMP_UNIT = "temp_unit";
 static const char *NVS_ID_CLOCK_FORMAT = "clk_fmt";
 static const char *NVS_ID_WEATHER_PATH = "wea_path";
+static const char *NVS_ID_MQTT_URL = "mqtt_url";
 static const char *NVS_ID_APP_SELECTION = "app";
 
 static bitclock_nvs_temp_unit_val_t temp_unit = BITCLOCK_NVS_TEMP_UNIT_VAL_NONE;
@@ -58,6 +59,22 @@ esp_err_t bitclock_nvs_init() {
                        &required_size);
     if (err != ESP_OK) {
       free((void *)weather_path_str);
+      return err;
+    }
+  }
+
+  // MQTT URL
+  required_size = 0;
+  err = nvs_get_blob(handle, NVS_ID_MQTT_URL, NULL, &required_size);
+  if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND) {
+    return err;
+  }
+  if (required_size > 0) {
+    mqtt_url_str = malloc(required_size);
+    err = nvs_get_blob(handle, NVS_ID_MQTT_URL, (void *)mqtt_url_str,
+                       &required_size);
+    if (err != ESP_OK) {
+      free((void *)mqtt_url_str);
       return err;
     }
   }
@@ -165,7 +182,7 @@ esp_err_t bitclock_nvs_set_mqtt_url(const char *url, size_t size) {
     return err;
   }
 
-  err = nvs_set_blob(handle, NVS_ID_WEATHER_PATH, url, size);
+  err = nvs_set_blob(handle, NVS_ID_MQTT_URL, url, size);
   if (err != ESP_OK) {
     return err;
   }

@@ -492,7 +492,7 @@ static int gatt_svc_access(uint16_t conn_handle, uint16_t attr_handle,
         gatt_svr_chr_mqtt_url_val[copy_len] = 0;
         bitclock_nvs_set_mqtt_url(gatt_svr_chr_mqtt_url_val, copy_len + 1);
       }
-      xEventGroupSetBits(weather_event_group_handle,
+      xEventGroupSetBits(mqtt_event_group_handle,
                          MQTT_EVENT_URL_CHANGED);
       return rc;
     } else if (attr_handle == gatt_svr_chr_temperature_unit_val_handle) {
