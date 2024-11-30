@@ -43,6 +43,7 @@ void mqtt_task_run(void *pvParameters) {
 
     if (mqtt_url == NULL || strlen(mqtt_url) < 1) {
       ESP_LOGI(TAG, "No mqtt_url so ignoring");
+      delay_time = portMAX_DELAY;
       continue;
     } else {
       ESP_LOGI(TAG, "MQTT URL: %s", mqtt_url);
@@ -50,6 +51,7 @@ void mqtt_task_run(void *pvParameters) {
 
     if (!bitclock_wifi_is_started()) {
       ESP_LOGW(TAG, "WiFi not started");
+      delay_time = portMAX_DELAY;
       continue;
     }
 
@@ -62,6 +64,8 @@ void mqtt_task_run(void *pvParameters) {
       send_homeassistant_mqtt_sensor_data(mqtt_url, &aqi_data);
 
       xSemaphoreGive(wifi_req_semaphore);
+
+      delay_time = pdMS_TO_TICKS(60000);
     }
   }
 }
