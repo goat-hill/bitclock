@@ -7,6 +7,7 @@
 #include "esp_wifi.h"
 #include "libs/http_buffer.h"
 #include "tasks/ble.h"
+#include "tasks/mqtt.h"
 #include "tasks/weather.h"
 
 static const char *TAG = "wifi";
@@ -50,6 +51,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
       wifi_has_ip_val = true;
       ESP_LOGI(TAG, "Connected with IP Address:" IPSTR,
                IP2STR(&event->ip_info.ip));
+      xEventGroupSetBits(mqtt_event_group_handle, MQTT_EVENT_WIFI_CONNECTED);
       xEventGroupSetBits(weather_event_group_handle,
                          WEATHER_EVENT_WIFI_CONNECTED);
       ble_notify_wifi_status_update();
