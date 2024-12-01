@@ -33,12 +33,15 @@ bool publish_homeassistant_config(const char *name, const char *unique_id,
                                   const char *unit_of_measurement,
                                   const char *state_class,
                                   const char *platform) {
+  snprintf(state_topic, sizeof(state_topic), "homeassistant/sensor/%s/state",
+           unique_id);
   snprintf(config_message, sizeof(config_message),
-           "{\"name\": \"%s\",\"unique_id\": \"%s\", \"device_class\": \"%s\", "
-           "\"unit_of_measurement\": \"%s\",\"state_class\": "
-           "\"%s\",\"platform\": \"%s\"}",
+           "{\"name\": \"%s\",\"uniq_id\": \"%s\", \"dev_cla\": \"%s\", "
+           "\"unit_of_meas\": \"%s\",\"stat_cla\": "
+           "\"%s\",\"p\": \"%s\", \"stat_t\": \"%s\"}",
            name, unique_id, device_class, unit_of_measurement, state_class,
-           platform);
+           platform, state_topic);
+
   snprintf(config_topic, sizeof(config_topic), "homeassistant/sensor/%s/config",
            unique_id);
   return publish_message(config_topic, config_message, true);
