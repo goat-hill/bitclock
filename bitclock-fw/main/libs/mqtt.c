@@ -77,10 +77,10 @@ void send_homeassistant_mqtt_sensor_data(const char *mqtt_url,
                                      "carbon_dioxide", "ppm", "measurement",
                                      "sensor") &&
         publish_homeassistant_config("Bitclock NOx", nox_unique_id,
-                                     "nitrogen_dioxide", "ppm", "measurement",
+                                     "nitrogen_dioxide", "", "measurement",
                                      "sensor") &&
         publish_homeassistant_config("Bitclock VOC", voc_unique_id,
-                                     "volatile_organic_compounds", "ppm",
+                                     "volatile_organic_compounds", "",
                                      "measurement", "sensor") &&
         publish_homeassistant_config("Bitclock Temperature", temp_unique_id,
                                      "temperature", "°C", "measurement",
