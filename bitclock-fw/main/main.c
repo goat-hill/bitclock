@@ -17,12 +17,12 @@
 #include "tasks/ble.h"
 #include "tasks/eink_display.h"
 #include "tasks/led.h"
+#include "tasks/mqtt.h"
 #include "tasks/scd4x.h"
 #include "tasks/sgp4x.h"
 #include "tasks/sharp_display.h"
 #include "tasks/sht4x.h"
 #include "tasks/tasks.h"
-#include "tasks/mqtt.h"
 #include "tasks/weather.h"
 #include "tasks/wifi.h"
 
@@ -102,7 +102,7 @@ void app_main(void) {
 #endif
 
 #ifdef SGP4X_TASK_ENABLED
-  sgp4xTask = xTaskCreateStatic(sgp4x_task_run, "scd4x",
+  sgp4xTask = xTaskCreateStatic(sgp4x_task_run, "sgp4x",
                                 SGP4X_STACK_SIZE,    // ulStackDepth
                                 (void *)1,           // pvParamters
                                 SGP4X_TASK_PRIORITY, // uxPriority
