@@ -12,9 +12,9 @@ static const char *nox_unique_id = "bitclock_nox";
 static const char *voc_unique_id = "bitclock_voc";
 static const char *temp_unique_id = "bitclock_temp";
 static const char *humidity_unique_id = "bitclock_humidity";
-static char config_message[300];
-static char config_topic[100];
-static char state_topic[100];
+static char config_message[256];
+static char config_topic[64];
+static char state_topic[64];
 
 bool publish_message(const char *topic, const char *message, bool retain) {
   bool success =
@@ -41,6 +41,7 @@ bool publish_homeassistant_config(const char *name, const char *unique_id,
            "\"%s\",\"p\": \"%s\", \"stat_t\": \"%s\"}",
            name, unique_id, device_class, unit_of_measurement, state_class,
            platform, state_topic);
+  ESP_LOGD(TAG, "Config message length: %d", strlen(config_message));
 
   snprintf(config_topic, sizeof(config_topic), "homeassistant/sensor/%s/config",
            unique_id);
@@ -97,7 +98,7 @@ void send_homeassistant_mqtt_sensor_data(const char *mqtt_url,
 
   ESP_LOGI(TAG, "Sending MQTT sensor data");
 
-  char buffer[32];
+  char buffer[16];
   bool success = true;
 
   snprintf(buffer, sizeof(buffer), "%u", aqi_data->co2_ppm);
