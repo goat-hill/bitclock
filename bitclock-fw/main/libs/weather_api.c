@@ -344,6 +344,9 @@ esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path) {
       .timeout_ms = 10000,
   };
   esp_http_client_handle_t client = esp_http_client_init(&config);
+  esp_http_client_set_header(client, "user-agent",
+                             "(bitclock.io, weather@bitclock.io)");
+  esp_http_client_set_header(client, "accept", "application/json");
 
   esp_err_t err = esp_http_client_perform(client);
   if (err != ESP_OK) {
