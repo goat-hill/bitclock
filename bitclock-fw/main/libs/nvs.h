@@ -24,6 +24,9 @@ esp_err_t bitclock_nvs_set_tz(const char *tz, size_t size);
 const char *bitclock_nvs_get_weather_path();
 esp_err_t bitclock_nvs_set_weather_path(const char *tz, size_t size);
 
+const char *bitclock_nvs_get_mqtt_url();
+esp_err_t bitclock_nvs_set_mqtt_url(const char *url, size_t size);
+
 bitclock_nvs_temp_unit_val_t bitclock_nvs_get_temp_unit();
 esp_err_t bitclock_nvs_set_temp_unit(bitclock_nvs_temp_unit_val_t unit);
 
