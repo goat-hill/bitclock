@@ -15,6 +15,7 @@ typedef uint8_t bitclock_nvs_app_selection_val_t;
 #define BITCLOCK_NVS_APP_SELECTION_VAL_NONE 0
 #define BITCLOCK_NVS_APP_SELECTION_VAL_CLOCK 1
 #define BITCLOCK_NVS_APP_SELECTION_VAL_WEATHER 2
+#define BITCLOCK_NVS_APP_SELECTION_VAL_AQI 3
 
 esp_err_t bitclock_nvs_init();
 

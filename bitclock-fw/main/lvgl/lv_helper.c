@@ -34,7 +34,7 @@ void lv_helper_set_view_mode(view_mode_t view_mode) {
     case VIEW_MODE_CLOCK:
       lv_helper_clock_create();
       break;
-    case VIEW_MODE_AQI_GRID:
+    case VIEW_MODE_AQI:
       lv_helper_aqi_grid_create();
       break;
     case VIEW_MODE_WEATHER:
@@ -62,7 +62,7 @@ void lv_helper_update() {
   case VIEW_MODE_CLOCK:
     lv_helper_clock_update(&lv_helper_view_mode_clock_data);
     break;
-  case VIEW_MODE_AQI_GRID:
+  case VIEW_MODE_AQI:
     lv_helper_aqi_grid_update(&lv_helper_view_mode_aqi_data);
     break;
   case VIEW_MODE_WEATHER:
