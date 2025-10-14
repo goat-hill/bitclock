@@ -32,3 +32,7 @@ TaskHandle_t bleTask;
 #ifdef WEATHER_TASK_ENABLED
 TaskHandle_t weatherTask;
 #endif
+
+#ifdef MQTT_TASK_ENABLED
+TaskHandle_t mqttTask;
+#endif

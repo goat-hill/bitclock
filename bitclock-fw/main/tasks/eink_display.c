@@ -584,6 +584,7 @@ void eink_task_run(void *pvParameters) {
       }
       eink_update();
       eink_power_off();
+
       display_sync_needed = false;
 
       frame_count++;

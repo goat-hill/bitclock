@@ -5,6 +5,7 @@ idf_component_register(
     "libs/gatt.c"
     "libs/http_buffer.c"
     "libs/i2c.c"
+    "libs/mqtt.c"
     "libs/nvs.c"
     "libs/ota.c"
     "libs/sensirion_gas_index_algorithm.c"
@@ -39,6 +40,7 @@ idf_component_register(
     "tasks/ble.c"
     "tasks/eink_display.c"
     "tasks/led.c"
+    "tasks/mqtt.c"
     "tasks/scd4x.c"
     "tasks/sgp4x.c"
     "tasks/sharp_display.c"
@@ -54,6 +56,7 @@ idf_component_register(
     bt
     driver
     esp_http_client
+    mqtt
     esp_partition
     esp-tls
     json

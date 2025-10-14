@@ -1,6 +1,6 @@
 #include "freertos/FreeRTOS.h"
 
-#define BLE_STACK_SIZE 1024 * 4
+#define BLE_STACK_SIZE 1024 * 3
 
 extern StaticTask_t bleTaskBuffer;
 extern StackType_t bleTaskStack[BLE_STACK_SIZE];

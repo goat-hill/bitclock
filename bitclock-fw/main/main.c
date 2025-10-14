@@ -17,6 +17,7 @@
 #include "tasks/ble.h"
 #include "tasks/eink_display.h"
 #include "tasks/led.h"
+#include "tasks/mqtt.h"
 #include "tasks/scd4x.h"
 #include "tasks/sgp4x.h"
 #include "tasks/sharp_display.h"
@@ -51,7 +52,7 @@ void app_main(void) {
   }
 
 #ifdef LED_TASK_ENABLED
-  ledTask = xTaskCreateStatic(led_task_run, "led",
+  ledTask = xTaskCreateStatic(led_task_run, "b-led",
                               LED_STACK_SIZE,    // ulStackDepth
                               (void *)1,         // pvParamters
                               LED_TASK_PRIORITY, // uxPriority
@@ -62,7 +63,7 @@ void app_main(void) {
 
 #ifdef DISP_TASK_ENABLED
 #if DISPLAY_TYPE == DISPLAY_TYPE_SHARP
-  dispTask = xTaskCreateStatic(disp_task_run, "display",
+  dispTask = xTaskCreateStatic(disp_task_run, "b-display",
                                DISP_STACK_SIZE,    // ulStackDepth
                                (void *)1,          // pvParamters
                                DISP_TASK_PRIORITY, // uxPriority
@@ -70,7 +71,7 @@ void app_main(void) {
                                &dispTaskBuffer     // pxTaskBuffer
   );
 #elif DISPLAY_TYPE == DISPLAY_TYPE_EINK
-  einkTask = xTaskCreateStatic(eink_task_run, "eink",
+  einkTask = xTaskCreateStatic(eink_task_run, "b-eink",
                                EINK_STACK_SIZE,    // ulStackDepth
                                (void *)1,          // pvParamters
                                EINK_TASK_PRIORITY, // uxPriority
@@ -81,7 +82,7 @@ void app_main(void) {
 #endif // DISP_TASK_ENABLED
 
 #ifdef SHT4X_TASK_ENABLED
-  sht4xTask = xTaskCreateStatic(sht4x_task_run, "sht4x",
+  sht4xTask = xTaskCreateStatic(sht4x_task_run, "b-sht4x",
                                 SHT4X_STACK_SIZE,    // ulStackDepth
                                 (void *)1,           // pvParamters
                                 SHT4X_TASK_PRIORITY, // uxPriority
@@ -91,7 +92,7 @@ void app_main(void) {
 #endif
 
 #ifdef SCD4X_TASK_ENABLED
-  scd4xTask = xTaskCreateStatic(scd4x_task_run, "scd4x",
+  scd4xTask = xTaskCreateStatic(scd4x_task_run, "b-scd4x",
                                 SCD4X_STACK_SIZE,    // ulStackDepth
                                 (void *)1,           // pvParamters
                                 SCD4X_TASK_PRIORITY, // uxPriority
@@ -101,7 +102,7 @@ void app_main(void) {
 #endif
 
 #ifdef SGP4X_TASK_ENABLED
-  sgp4xTask = xTaskCreateStatic(sgp4x_task_run, "scd4x",
+  sgp4xTask = xTaskCreateStatic(sgp4x_task_run, "b-sgp4x",
                                 SGP4X_STACK_SIZE,    // ulStackDepth
                                 (void *)1,           // pvParamters
                                 SGP4X_TASK_PRIORITY, // uxPriority
@@ -111,7 +112,7 @@ void app_main(void) {
 #endif
 
 #ifdef WIFI_TASK_ENABLED
-  wifiTask = xTaskCreateStatic(wifi_task_run, "wifi",
+  wifiTask = xTaskCreateStatic(wifi_task_run, "b-wifi",
                                WIFI_STACK_SIZE,    // ulStackDepth
                                (void *)1,          // pvParamters
                                WIFI_TASK_PRIORITY, // uxPriority
@@ -121,7 +122,7 @@ void app_main(void) {
 #endif
 
 #ifdef BLE_TASK_ENABLED
-  bleTask = xTaskCreateStatic(ble_task_run, "ble",
+  bleTask = xTaskCreateStatic(ble_task_run, "b-ble",
                               BLE_STACK_SIZE,    // ulStackDepth
                               (void *)1,         // pvParamters
                               BLE_TASK_PRIORITY, // uxPriority
@@ -131,12 +132,22 @@ void app_main(void) {
 #endif
 
 #ifdef WEATHER_TASK_ENABLED
-  weatherTask = xTaskCreateStatic(weather_task_run, "weather",
+  weatherTask = xTaskCreateStatic(weather_task_run, "b-weather",
                                   WEATHER_STACK_SIZE,    // ulStackDepth
                                   (void *)1,             // pvParamters
                                   WEATHER_TASK_PRIORITY, // uxPriority
                                   weatherTaskStack,      // puxStackBuffer
                                   &weatherTaskBuffer     // pxTaskBuffer
+  );
+#endif
+
+#ifdef MQTT_TASK_ENABLED
+  mqttTask = xTaskCreateStatic(mqtt_task_run, "b-mqtt",
+                               MQTT_STACK_SIZE,    // ulStackDepth
+                               (void *)1,          // pvParamters
+                               MQTT_TASK_PRIORITY, // uxPriority
+                               mqttTaskStack,      // puxStackBuffer
+                               &mqttTaskBuffer     // pxTaskBuffer
   );
 #endif
 
