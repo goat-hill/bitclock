@@ -4,6 +4,7 @@
 #include "libs/nvs.h"
 #include "tasks/wifi.h"
 #include <string.h>
+#include <time.h>
 
 static const char *TAG = "weather-task";
 
@@ -18,6 +19,8 @@ wifi_weather_t latest_weather;
 void weather_task_run(void *pvParameters) {
   weather_event_group_handle = xEventGroupCreateStatic(&weather_event_group);
   TickType_t delay_time = portMAX_DELAY;
+  time_t now;
+  struct tm timeinfo;
 
   while (1) {
     xEventGroupWaitBits(weather_event_group_handle,
@@ -34,9 +37,18 @@ void weather_task_run(void *pvParameters) {
       path = "/gridpoints/MTR/85,105/forecast";
     }
 
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
+    if (timeinfo.tm_year < 2024 - 1900) {
+      ESP_LOGW(TAG, "Time not synced yet, unable to show forecast");
+      delay_time = pdMS_TO_TICKS(1000 * 1);
+      continue;
+    }
+
     esp_err_t refresh_error = ESP_FAIL;
     if (xSemaphoreTake(wifi_req_semaphore, 0)) {
-      refresh_error = refresh_daily_weather(&latest_weather, path);
+      refresh_error = refresh_daily_weather(&latest_weather, path, &timeinfo);
 
       xSemaphoreGive(wifi_req_semaphore);
     }

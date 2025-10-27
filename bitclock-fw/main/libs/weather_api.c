@@ -7,7 +7,6 @@
 #include "libs/http_buffer.h"
 #include "libs/nvs.h"
 #include <sys/param.h>
-#include <time.h>
 
 static const char *TAG = "weather_api";
 
@@ -246,19 +245,9 @@ static esp_err_t weather_http_event_handler(esp_http_client_event_t *evt) {
 }
 
 esp_err_t parse_weather_response(char *response_buffer,
-                                 wifi_weather_t *weather) {
-  time_t now;
-  struct tm timeinfo;
+                                 wifi_weather_t *weather, struct tm *timeinfo) {
   char current_date_str[11];
-
-  time(&now);
-  localtime_r(&now, &timeinfo);
-
-  if (timeinfo.tm_year < 2024) {
-    ESP_LOGW(TAG, "Time not known, unable to show forecast");
-    return ESP_FAIL;
-  }
-  strftime(current_date_str, sizeof(current_date_str), "%Y-%m-%d", &timeinfo);
+  strftime(current_date_str, sizeof(current_date_str), "%Y-%m-%d", timeinfo);
 
   cJSON *root = cJSON_Parse(response_buffer);
   if (root == NULL) {
@@ -369,7 +358,7 @@ esp_err_t parse_weather_response(char *response_buffer,
   return ESP_OK;
 }
 
-esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path) {
+esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path, struct tm *timeinfo) {
   // TODO: Add ?units=si for SI units?
   // https://www.weather.gov/documentation/services-web-api#/default/gridpoint_forecast
   esp_http_client_config_t config = {
@@ -392,11 +381,12 @@ esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path) {
     esp_http_client_cleanup(client);
     return err;
   }
+
   ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %" PRId64,
            esp_http_client_get_status_code(client),
            esp_http_client_get_content_length(client));
 
-  parse_weather_response(http_response_buffer, weather);
+  parse_weather_response(http_response_buffer, weather, timeinfo);
 
   esp_http_client_cleanup(client);
   return ESP_OK;
