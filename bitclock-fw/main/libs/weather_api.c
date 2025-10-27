@@ -244,8 +244,8 @@ static esp_err_t weather_http_event_handler(esp_http_client_event_t *evt) {
   return ESP_OK;
 }
 
-esp_err_t parse_weather_response(char *response_buffer,
-                                 wifi_weather_t *weather, struct tm *timeinfo) {
+esp_err_t parse_weather_response(char *response_buffer, wifi_weather_t *weather,
+                                 struct tm *timeinfo) {
   char current_date_str[11];
   strftime(current_date_str, sizeof(current_date_str), "%Y-%m-%d", timeinfo);
 
@@ -271,7 +271,8 @@ esp_err_t parse_weather_response(char *response_buffer,
   }
 
   // Find first period for today
-  // The api.weather.gov gridpoints API caches for 12+ hours and returns old forecasts sometimes
+  // The api.weather.gov gridpoints API caches for 12+ hours and returns old
+  // forecasts sometimes
   cJSON *period = NULL;
   int start_period_i = 0;
   int num_periods = cJSON_GetArraySize(periods);
@@ -358,7 +359,8 @@ esp_err_t parse_weather_response(char *response_buffer,
   return ESP_OK;
 }
 
-esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path, struct tm *timeinfo) {
+esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path,
+                                struct tm *timeinfo) {
   // TODO: Add ?units=si for SI units?
   // https://www.weather.gov/documentation/services-web-api#/default/gridpoint_forecast
   esp_http_client_config_t config = {
