@@ -1,6 +1,6 @@
 #include "driver/i2c_master.h"
 
-#include "freertos/freertos.h"
+#include "freertos/FreeRTOS.h"
 
 void i2c_bus_init();
 
