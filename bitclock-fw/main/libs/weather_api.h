@@ -28,4 +28,4 @@ typedef struct {
   weather_icon_t icon;
 } wifi_weather_t;
 
-esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path);
+esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path, struct tm *timeinfo);

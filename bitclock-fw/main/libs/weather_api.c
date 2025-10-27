@@ -245,7 +245,10 @@ static esp_err_t weather_http_event_handler(esp_http_client_event_t *evt) {
 }
 
 esp_err_t parse_weather_response(char *response_buffer,
-                                 wifi_weather_t *weather) {
+                                 wifi_weather_t *weather, struct tm *timeinfo) {
+  char current_date_str[11];
+  strftime(current_date_str, sizeof(current_date_str), "%Y-%m-%d", timeinfo);
+
   cJSON *root = cJSON_Parse(response_buffer);
   if (root == NULL) {
     ESP_LOGE(TAG, "Error on JSON parse");
@@ -267,18 +270,42 @@ esp_err_t parse_weather_response(char *response_buffer,
     return ESP_FAIL;
   }
 
+  // Find first period for today
+  // The api.weather.gov gridpoints API caches for 12+ hours and returns old forecasts sometimes
+  cJSON *period = NULL;
+  int start_period_i = 0;
+  int num_periods = cJSON_GetArraySize(periods);
+  for (; start_period_i < num_periods; start_period_i++) {
+    cJSON *cur_period = cJSON_GetArrayItem(periods, start_period_i);
+    if (cur_period == NULL) {
+      ESP_LOGE(TAG, "No period found at index %d", start_period_i);
+      break;
+    }
+
+    cJSON *startTime = cJSON_GetObjectItem(cur_period, "startTime");
+    if (startTime == NULL || startTime->valuestring == NULL) {
+      ESP_LOGE(TAG, "No startTime found in response");
+      continue;
+    }
+
+    // Compare date part of startTime with current date
+    if (strncmp(startTime->valuestring, current_date_str, 10) == 0) {
+      period = cur_period;
+      break;
+    }
+  }
+
+  if (period == NULL) {
+    ESP_LOGE(TAG, "No period found for today in response");
+    cJSON_Delete(root);
+    return ESP_FAIL;
+  }
+
   // If we only have one temperature, that's ok
   // If isDayTime is false, that's the last temperature to parse. Store it as
   // the min If isDaytime is true for the first value, store that as max and
   // store next (if available) as min Parse icon string and store appropriate
   // local image enum value
-
-  cJSON *period = cJSON_GetArrayItem(periods, 0);
-  if (period == NULL) {
-    ESP_LOGE(TAG, "No period found in response");
-    cJSON_Delete(root);
-    return ESP_FAIL;
-  }
 
   cJSON *temperature = cJSON_GetObjectItem(period, "temperature");
   if (temperature == NULL) {
@@ -310,14 +337,14 @@ esp_err_t parse_weather_response(char *response_buffer,
     weather->temp_min = temperature->valueint;
   }
 
-  // Get second temperature if available if the first was daytime, but don't
-  // error if missing
-  if (isDaytime->valueint) {
-    cJSON *period2 = cJSON_GetArrayItem(periods, 1);
+  // Get second temperature if available (the period immediately after the
+  // first one found). Don't error if missing.
+  if (isDaytime->valueint && (start_period_i + 1) < num_periods) {
+    cJSON *period2 = cJSON_GetArrayItem(periods, start_period_i + 1);
     if (period2 != NULL) {
       cJSON *temperature2 = cJSON_GetObjectItem(period2, "temperature");
       if (temperature2 != NULL) {
-        weather->temp_min = temperature2->valuedouble;
+        weather->temp_min = temperature2->valueint;
       }
     }
   }
@@ -331,7 +358,7 @@ esp_err_t parse_weather_response(char *response_buffer,
   return ESP_OK;
 }
 
-esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path) {
+esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path, struct tm *timeinfo) {
   // TODO: Add ?units=si for SI units?
   // https://www.weather.gov/documentation/services-web-api#/default/gridpoint_forecast
   esp_http_client_config_t config = {
@@ -344,9 +371,9 @@ esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path) {
       .timeout_ms = 10000,
   };
   esp_http_client_handle_t client = esp_http_client_init(&config);
-  esp_http_client_set_header(client, "user-agent",
+  esp_http_client_set_header(client, "User-agent",
                              "(bitclock.io, weather@bitclock.io)");
-  esp_http_client_set_header(client, "accept", "application/json");
+  esp_http_client_set_header(client, "Accept", "application/geo+json");
 
   esp_err_t err = esp_http_client_perform(client);
   if (err != ESP_OK) {
@@ -354,11 +381,12 @@ esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path) {
     esp_http_client_cleanup(client);
     return err;
   }
+
   ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %" PRId64,
            esp_http_client_get_status_code(client),
            esp_http_client_get_content_length(client));
 
-  parse_weather_response(http_response_buffer, weather);
+  parse_weather_response(http_response_buffer, weather, timeinfo);
 
   esp_http_client_cleanup(client);
   return ESP_OK;
