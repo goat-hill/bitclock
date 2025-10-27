@@ -8,6 +8,7 @@
 #include "pins.h"
 #include "tasks/ble.h"
 #include <inttypes.h>
+#include <math.h>
 
 static const char *TAG = "sht4x";
 
@@ -16,7 +17,9 @@ StackType_t sht4xTaskStack[SHT4X_STACK_SIZE];
 
 static bool tempAvailable = false;
 static float degC;
+static float degCEnclosureOffset;
 static float relativeHumidity;
+static float relativeHumidityEnclosureMultiplier;
 
 #define I2C_DEVICE_ADDR 0x44
 #define I2C_DEVICE_SPEED 100000 // 100K standard mode
@@ -157,7 +160,8 @@ esp_err_t sht4x_measure_high_precision() {
     // Linear calibration based on semi-scientific testing with the rev5
     // enclosure Observations:  29.06 deg C should be 25.61
     //                7.59 deg C should be 3.67
-    degC = degC * 1.022 - 4.08;
+    degCEnclosureOffset = degC * 0.022 - 4.08;
+    degC = degC + degCEnclosureOffset;
 
     tempAvailable = true;
   } else {
@@ -170,11 +174,29 @@ esp_err_t sht4x_measure_high_precision() {
     rh_pRH = -6 + (125 * ((float)rh_ticks) / 65535);
     // ESP_LOGI(TAG, "rel humidity ticks 0x%x 0x%x %" PRIu16 " %f",
     // sht4xResponse[3], sht4xResponse[4], rh_ticks, rh_pRH);
+
+    // Because are temperature is offset by PCB/Enclosure heating
+    // We need to compensate the RH too. See
+    // "App Notes Humidity at a Glance" for the source of this equation:
+    //
+    //  RH2 = RH1*exp(4283.78*(T1-T2)/(243.12+T1)/(243.12+T2));
+    //
+    // T1 = degC - degCEnclosureOffset
+    // T2 = degC
+    //
+    // It's ~1.22x at 26deg C compensated temp
+    //
+    relativeHumidityEnclosureMultiplier =
+        exp((4283.78 * -degCEnclosureOffset) /
+            ((243.12 + degC - degCEnclosureOffset) * (243.12 + degC)));
+    rh_pRH *= relativeHumidityEnclosureMultiplier;
+
     if (rh_pRH > 100) {
       rh_pRH = 100;
     } else if (rh_pRH < 0) {
       rh_pRH = 0;
     }
+
     relativeHumidity = rh_pRH;
   } else {
     ret = ESP_ERR_INVALID_CRC;

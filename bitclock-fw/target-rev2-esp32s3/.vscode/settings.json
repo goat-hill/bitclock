@@ -10,6 +10,6 @@
         "ctime": "c",
         "mutex": "c",
         "limits": "c",
-        "cstdint": "c"
+        "cstdio": "c"
     }
 }

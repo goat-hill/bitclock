@@ -70,7 +70,7 @@ export default function WeatherBlock({
             {weatherPath ? (
               <Anchor
                 component={Link}
-                href={`https://api.weather.gov/${weatherPath}`}
+                href={`https://api.weather.gov${weatherPath}`}
               >
                 {`https://api.weather.gov${weatherPath}`}
               </Anchor>

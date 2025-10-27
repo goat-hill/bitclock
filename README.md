@@ -3,10 +3,9 @@
 # bitclock
 Open source e-ink desk companion, clock, and air quality monitor.
 
-https://bitclock.io
+Available for purchase in USA @ https://bitclock.io
 
-<img src="https://github.com/goat-hill/bitclock/assets/220799/bc8474b8-f251-447f-9529-ead370a547e0" alt="Bitclock photo" width="800" />
-
+<img src="https://github.com/user-attachments/assets/a1be3895-0399-4e95-8b5f-d52c59792a22" width="500" alt="Bitclock photo" />
 
 Visit https://bitclock.io/connect to configure your existing device
 
@@ -38,9 +37,28 @@ KiCad schematic, board, and JLCPCB ordering files.
 
 See [bitclock-pcb/](bitclock-pcb/)
 
-<img src="https://github.com/goat-hill/bitclock/assets/220799/4e667f21-f8f4-497b-bb93-be5a299950ad" width="500" alt="KiCAD device PCB screenshot" />
+<img src="https://github.com/user-attachments/assets/40ddb658-e42d-4617-83b4-a5637c75a250" width="500" alt="Bitclock PCB" />
+
+# Blog posts
+
+- [Advanced ESP32 development with ESP-IDF](https://bitclock.io/blog/esp-idf-vscode)
 
 # Contributing
+
+## Cloning the repo
+
+This repo uses git submodules. Make sure to use `git clone --recursive`.
+
+```sh
+git clone --recursive git@github.com:goat-hill/bitclock.git
+```
+
+If the repo was previously checked out without `--recursive`, initialize the submodules.
+
+```sh
+git submodule init
+git submodule update
+```
 
 ## Pre-commit linting
 

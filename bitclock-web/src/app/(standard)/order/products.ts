@@ -14,23 +14,6 @@ type ProductInfo = {
 
 const products: ProductInfo[] = [
   {
-    id: "bitclock-white",
-    name: "Bitclock (Rock white)",
-    description:
-      "Complete Bitclock with a 3D printed rock white PETG enclosure. Rock pattern may vary slightly by print.",
-    image: BitclockWhiteImage,
-    price: 79,
-    priceId: process.env.STRIPE_BITCLOCK_WHITE_PRICE,
-  },
-  {
-    id: "bitclock-black",
-    image: BitclockBlackImage,
-    name: "Bitclock (Black)",
-    description: "Complete Bitclock with a 3D printed black PETG enclosure.",
-    price: 79,
-    priceId: process.env.STRIPE_BITCLOCK_BLACK_PRICE,
-  },
-  {
     id: "bitclock-pcb",
     image: PcbImage,
     name: "Bitclock PCB",

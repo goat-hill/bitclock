@@ -12,6 +12,3 @@ venv/
 
 # node
 node_modules/
-
-# temporarily omit PCB rev2
-bitclock-pcb/rev2/
