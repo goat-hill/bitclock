@@ -19,10 +19,15 @@ import { BluetoothConnection } from "./ble-connection";
 
 interface FirmwareBlockProps {
   bluetoothConnection: BluetoothConnection | null;
+  firmwareVersion: string | null;
 }
+
+const latestOfficialFirmwareVersion = "1.1.0";
+const firmwareVersionPath = "https://bitclock.io/firmware/latest-firmware.bin";
 
 export default function FirmwareBlock({
   bluetoothConnection,
+  firmwareVersion,
 }: FirmwareBlockProps) {
   const [file, setFile] = useState<File | null>(null);
   const [otaProgress, setOtaProgress] = useState(0);
@@ -89,9 +94,8 @@ export default function FirmwareBlock({
     <>
       <Group>
         <Title order={3}>Firmware</Title>
-        <Badge variant="outline">v1.0.0</Badge>
-        <Badge variant="outline" color="green">
-          Official
+        <Badge variant="outline">
+          {firmwareVersion ? `v${firmwareVersion}` : "Unknown"}
         </Badge>
       </Group>
 
