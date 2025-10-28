@@ -10,14 +10,6 @@
 
 static const char *TAG = "weather_api";
 
-typedef enum {
-  WEATHER_PARSER_STATUS_LOOKING_FOR_WEATHER_1 = 0,
-  WEATHER_PARSER_STATUS_LOOKING_FOR_WEATHER_2,
-  WEATHER_PARSER_STATUS_DONE,
-} weather_parser_status_t;
-weather_parser_status_t parser_status = 0;
-int parser_token_index = 0;
-
 /*
   WEATHER_ICON_NONE
   WEATHER_ICON_CLEAR_NIGHT
@@ -330,7 +322,7 @@ esp_err_t parse_weather_response(char *response_buffer, wifi_weather_t *weather,
   }
 
   cJSON *icon = cJSON_GetObjectItem(period, "icon");
-  if (icon == NULL) {
+  if (icon == NULL || icon->valuestring == NULL) {
     ESP_LOGE(TAG, "No icon found in response");
     cJSON_Delete(root);
     return ESP_FAIL;
@@ -370,6 +362,7 @@ esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path,
                                 struct tm *timeinfo) {
   // TODO: Add ?units=si for SI units?
   // https://www.weather.gov/documentation/services-web-api#/default/gridpoint_forecast
+  esp_err_t err = ESP_OK;
   esp_http_client_config_t config = {
       .host = "api.weather.gov",
       .transport_type = HTTP_TRANSPORT_OVER_SSL,
@@ -380,23 +373,38 @@ esp_err_t refresh_daily_weather(wifi_weather_t *weather, const char *path,
       .timeout_ms = 10000,
   };
   esp_http_client_handle_t client = esp_http_client_init(&config);
+  if (client == NULL) {
+    ESP_LOGE(TAG, "Failed to initialize HTTP client");
+    return ESP_ERR_NO_MEM;
+  }
+
   esp_http_client_set_header(client, "User-agent",
                              "(bitclock.io, weather@bitclock.io)");
   esp_http_client_set_header(client, "Accept", "application/geo+json");
 
-  esp_err_t err = esp_http_client_perform(client);
+  err = esp_http_client_perform(client);
   if (err != ESP_OK) {
     ESP_LOGE(TAG, "HTTP GET request failed: %s", esp_err_to_name(err));
-    esp_http_client_cleanup(client);
-    return err;
+    goto http_cleanup;
   }
 
-  ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %" PRId64,
-           esp_http_client_get_status_code(client),
+  int status_code = esp_http_client_get_status_code(client);
+  ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %" PRId64, status_code,
            esp_http_client_get_content_length(client));
 
-  parse_weather_response(http_response_buffer, weather, timeinfo);
+  if (status_code < 200 || status_code >= 300) {
+    ESP_LOGE(TAG, "HTTP request failed with status %d", status_code);
+    err = ESP_ERR_INVALID_RESPONSE;
+    goto http_cleanup;
+  }
 
+  err = parse_weather_response(http_response_buffer, weather, timeinfo);
+  if (err != ESP_OK) {
+    ESP_LOGE(TAG, "Failed to parse weather response: %s", esp_err_to_name(err));
+    goto http_cleanup;
+  }
+
+http_cleanup:
   esp_http_client_cleanup(client);
-  return ESP_OK;
+  return err;
 }
