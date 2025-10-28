@@ -242,6 +242,9 @@ esp_err_t parse_weather_response(char *response_buffer, wifi_weather_t *weather,
                                  struct tm *timeinfo) {
   char current_date_str[11];
   strftime(current_date_str, sizeof(current_date_str), "%Y-%m-%d", timeinfo);
+  cJSON *startTime;
+  cJSON *endTime;
+  cJSON *isDaytime;
 
   cJSON *root = cJSON_Parse(response_buffer);
   if (root == NULL) {
@@ -264,9 +267,10 @@ esp_err_t parse_weather_response(char *response_buffer, wifi_weather_t *weather,
     return ESP_FAIL;
   }
 
-  // Find first period for today
-  // The api.weather.gov gridpoints API caches for 12+ hours and returns old
-  // forecasts sometimes
+  // Find first period matching today.
+  //
+  // api.weather.gov caches old forecasts up to 12+ hours which may include
+  // the previous day's forecast
   cJSON *period = NULL;
   int start_period_i = 0;
   int num_periods = cJSON_GetArraySize(periods);
@@ -277,13 +281,22 @@ esp_err_t parse_weather_response(char *response_buffer, wifi_weather_t *weather,
       break;
     }
 
-    cJSON *startTime = cJSON_GetObjectItem(cur_period, "startTime");
+    startTime = cJSON_GetObjectItem(cur_period, "startTime");
     if (startTime == NULL || startTime->valuestring == NULL) {
       ESP_LOGE(TAG, "No startTime found in response");
       continue;
     }
 
-    // Compare date part of startTime with current date
+    // Skip any forecasts that are just this morning (end time is today and not
+    // isDaytime)
+    endTime = cJSON_GetObjectItem(cur_period, "endTime");
+    isDaytime = cJSON_GetObjectItem(cur_period, "isDaytime");
+    if (endTime != NULL && isDaytime != NULL && isDaytime->valueint == 0 &&
+        strncmp(endTime->valuestring, current_date_str, 10) == 0) {
+      continue;
+    }
+
+    // Otherwise, stop if the forecast is today
     if (strncmp(startTime->valuestring, current_date_str, 10) == 0) {
       period = cur_period;
       break;
@@ -309,7 +322,7 @@ esp_err_t parse_weather_response(char *response_buffer, wifi_weather_t *weather,
     return ESP_FAIL;
   }
 
-  cJSON *isDaytime = cJSON_GetObjectItem(period, "isDaytime");
+  isDaytime = cJSON_GetObjectItem(period, "isDaytime");
   if (isDaytime == NULL) {
     ESP_LOGE(TAG, "No isDaytime found in response");
     cJSON_Delete(root);
