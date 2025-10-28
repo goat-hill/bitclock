@@ -33,6 +33,7 @@ type GattAttributeParser<T> = {
 export default function Home() {
   const [bluetoothConnection, setBluetoothConnection] =
     useState<BluetoothConnection | null>(null);
+  const [firmwareVersion, setFirmwareVersion] = useState<string | null>(null);
   const [temperature, setTemperature] = useState(0);
   const [humidity, setHumidity] = useState(0);
   const [co2, setCo2] = useState(0);
@@ -83,6 +84,11 @@ export default function Home() {
       attributeId: gatt.CHR_APP_SELECTION_UUID,
       parse: (value: DataView) => value.getUint8(0),
       setter: setAppSelection,
+    },
+    {
+      attributeId: gatt.CHR_FW_VERSION_UUID,
+      parse: (value: DataView) => decoder.decode(value),
+      setter: setFirmwareVersion,
     },
   ];
   const attributeObservers: GattAttributeParser<any>[] = [
@@ -284,7 +290,10 @@ export default function Home() {
 
           <Divider my="md" />
 
-          <FirmwareBlock bluetoothConnection={bluetoothConnection} />
+          <FirmwareBlock
+            bluetoothConnection={bluetoothConnection}
+            firmwareVersion={firmwareVersion}
+          />
         </Box>
       )}
     </Container>

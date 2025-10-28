@@ -39,6 +39,14 @@ uint16_t gatt_svr_chr_wifi_val_handle;
 #define WIFI_IS_STARTED BIT0
 #define WIFI_HAS_IP BIT1
 
+// Firmware version
+// d568bf56-7527-4fe0-9cc5-7c6968613592
+static const ble_uuid128_t gatt_svr_chr_firmware_version_uuid =
+    BLE_UUID128_INIT(0x92, 0x35, 0x61, 0x68, 0x69, 0x7c, 0xc5, 0x9c, 0xe0, 0x4f,
+                     0x27, 0x75, 0x56, 0xbf, 0x68, 0xd5);
+static const char *gatt_svr_chr_firmware_version_val = "1.1.0";
+uint16_t gatt_svr_chr_firmware_version_val_handle;
+
 // Wifi
 // a5313036-a66e-e990-2147-49a7b1557044
 static const ble_uuid128_t gatt_svr_chr_wifi_uuid =
@@ -227,6 +235,13 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
                     .val_handle = &gatt_svr_chr_nox_index_val_handle,
                 },
                 {
+                    .uuid = &gatt_svr_chr_firmware_version_uuid.u,
+                    .access_cb = gatt_svc_access,
+                    .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_READ_ENC |
+                             BLE_GATT_CHR_F_READ_AUTHEN,
+                    .val_handle = &gatt_svr_chr_firmware_version_val_handle,
+                },
+                {
                     0, /* No more characteristics in this service. */
                 }},
     },
@@ -412,6 +427,10 @@ static int gatt_svc_access(uint16_t conn_handle, uint16_t attr_handle,
       static int32_t nox_index;
       nox_index = sgp41_current_nox_index();
       rc = os_mbuf_append(ctxt->om, &nox_index, sizeof(nox_index));
+      return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
+    } else if (attr_handle == gatt_svr_chr_firmware_version_val_handle) {
+      rc = os_mbuf_append(ctxt->om, gatt_svr_chr_firmware_version_val,
+                          strlen(gatt_svr_chr_firmware_version_val));
       return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
     } else {
       return BLE_ATT_ERR_READ_NOT_PERMITTED;
