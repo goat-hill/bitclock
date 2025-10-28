@@ -44,12 +44,6 @@ static weather_icon_mapping_t icon_mapping[] = {
     {.label = "few",
      .icon_day = WEATHER_ICON_SUNNY,
      .icon_night = WEATHER_ICON_CLEAR_NIGHT},
-    {.label = "skc",
-     .icon_day = WEATHER_ICON_SUNNY,
-     .icon_night = WEATHER_ICON_CLEAR_NIGHT},
-    {.label = "few",
-     .icon_day = WEATHER_ICON_PARTLY_CLOUDY_DAY,
-     .icon_night = WEATHER_ICON_PARTLY_CLOUDY_NIGHT},
     {.label = "sct",
      .icon_day = WEATHER_ICON_PARTLY_CLOUDY_DAY,
      .icon_night = WEATHER_ICON_PARTLY_CLOUDY_NIGHT},
@@ -197,6 +191,9 @@ weather_icon_t icon_for_image_url(const char *icon_url, bool day_icon) {
 
   weather_icon_mapping_t *cur_icon = icon_mapping;
   for (; *((uint8_t *)cur_icon) != 0; cur_icon++) {
+    // Log current comparison
+    ESP_LOGD(TAG, "Comparing icon label: %s to filename: %s",
+             cur_icon->label, filename);
     if (strncmp(cur_icon->label, filename, strlen(cur_icon->label)) == 0) {
       return day_icon ? cur_icon->icon_day : cur_icon->icon_night;
     }
