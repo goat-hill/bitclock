@@ -29,22 +29,8 @@ typedef struct {
 } weather_icon_mapping_t;
 
 // Icons: https://github.com/weather-gov/weather.gov/blob/main/docs/icons.md
+// We use fuzzy matching so list should have more specific entries first
 static weather_icon_mapping_t icon_mapping[] = {
-    {.label = "skc",
-     .icon_day = WEATHER_ICON_SUNNY,
-     .icon_night = WEATHER_ICON_CLEAR_NIGHT},
-    {.label = "few",
-     .icon_day = WEATHER_ICON_SUNNY,
-     .icon_night = WEATHER_ICON_CLEAR_NIGHT},
-    {.label = "sct",
-     .icon_day = WEATHER_ICON_PARTLY_CLOUDY_DAY,
-     .icon_night = WEATHER_ICON_PARTLY_CLOUDY_NIGHT},
-    {.label = "bkn",
-     .icon_day = WEATHER_ICON_CLOUD,
-     .icon_night = WEATHER_ICON_CLOUD},
-    {.label = "ovc",
-     .icon_day = WEATHER_ICON_CLOUD,
-     .icon_night = WEATHER_ICON_CLOUD},
     {.label = "wind_skc",
      .icon_day = WEATHER_ICON_SUNNY,
      .icon_night = WEATHER_ICON_CLEAR_NIGHT},
@@ -60,9 +46,18 @@ static weather_icon_mapping_t icon_mapping[] = {
     {.label = "wind_ovc",
      .icon_day = WEATHER_ICON_CLOUD,
      .icon_night = WEATHER_ICON_CLOUD},
-    {.label = "snow",
+    {.label = "rain_fzra",
      .icon_day = WEATHER_ICON_SNOWY,
      .icon_night = WEATHER_ICON_SNOWY},
+    {.label = "snow_fzra",
+     .icon_day = WEATHER_ICON_SNOWY,
+     .icon_night = WEATHER_ICON_SNOWY},
+    {.label = "rain_showers_hi",
+     .icon_day = WEATHER_ICON_RAINY,
+     .icon_night = WEATHER_ICON_RAINY},
+    {.label = "rain_showers",
+     .icon_day = WEATHER_ICON_RAINY,
+     .icon_night = WEATHER_ICON_RAINY},
     {.label = "rain_snow",
      .icon_day = WEATHER_ICON_SNOWY,
      .icon_night = WEATHER_ICON_SNOWY},
@@ -72,13 +67,31 @@ static weather_icon_mapping_t icon_mapping[] = {
     {.label = "snow_sleet",
      .icon_day = WEATHER_ICON_SNOWY,
      .icon_night = WEATHER_ICON_SNOWY},
+    {.label = "tsra_sct",
+     .icon_day = WEATHER_ICON_THUNDERSTORM,
+     .icon_night = WEATHER_ICON_THUNDERSTORM},
+    {.label = "tsra_hi",
+     .icon_day = WEATHER_ICON_THUNDERSTORM,
+     .icon_night = WEATHER_ICON_THUNDERSTORM},
+    {.label = "skc",
+     .icon_day = WEATHER_ICON_SUNNY,
+     .icon_night = WEATHER_ICON_CLEAR_NIGHT},
+    {.label = "few",
+     .icon_day = WEATHER_ICON_SUNNY,
+     .icon_night = WEATHER_ICON_CLEAR_NIGHT},
+    {.label = "sct",
+     .icon_day = WEATHER_ICON_PARTLY_CLOUDY_DAY,
+     .icon_night = WEATHER_ICON_PARTLY_CLOUDY_NIGHT},
+    {.label = "bkn",
+     .icon_day = WEATHER_ICON_CLOUD,
+     .icon_night = WEATHER_ICON_CLOUD},
+    {.label = "ovc",
+     .icon_day = WEATHER_ICON_CLOUD,
+     .icon_night = WEATHER_ICON_CLOUD},
+    {.label = "snow",
+     .icon_day = WEATHER_ICON_SNOWY,
+     .icon_night = WEATHER_ICON_SNOWY},
     {.label = "fzra",
-     .icon_day = WEATHER_ICON_SNOWY,
-     .icon_night = WEATHER_ICON_SNOWY},
-    {.label = "rain_fzra",
-     .icon_day = WEATHER_ICON_SNOWY,
-     .icon_night = WEATHER_ICON_SNOWY},
-    {.label = "snow_fzra",
      .icon_day = WEATHER_ICON_SNOWY,
      .icon_night = WEATHER_ICON_SNOWY},
     {.label = "sleet",
@@ -87,19 +100,7 @@ static weather_icon_mapping_t icon_mapping[] = {
     {.label = "rain",
      .icon_day = WEATHER_ICON_RAINY,
      .icon_night = WEATHER_ICON_RAINY},
-    {.label = "rain_showers",
-     .icon_day = WEATHER_ICON_RAINY,
-     .icon_night = WEATHER_ICON_RAINY},
-    {.label = "rain_showers_hi",
-     .icon_day = WEATHER_ICON_RAINY,
-     .icon_night = WEATHER_ICON_RAINY},
     {.label = "tsra",
-     .icon_day = WEATHER_ICON_THUNDERSTORM,
-     .icon_night = WEATHER_ICON_THUNDERSTORM},
-    {.label = "tsra_sct",
-     .icon_day = WEATHER_ICON_THUNDERSTORM,
-     .icon_night = WEATHER_ICON_THUNDERSTORM},
-    {.label = "tsra_hi",
      .icon_day = WEATHER_ICON_THUNDERSTORM,
      .icon_night = WEATHER_ICON_THUNDERSTORM},
     {.label = "tornado",
@@ -170,52 +171,25 @@ static weather_icon_mapping_t icon_mapping[] = {
 // If .isDaytime is true, use 2
 
 weather_icon_t icon_for_image_url(const char *icon_url, bool day_icon) {
-  // 1. Find the last '/' to get the start of the filename
-  const char *filename_start = strrchr(icon_url, '/');
-  if (filename_start == NULL) {
-    ESP_LOGE(TAG, "No '/' found in icon URL: %s", icon_url);
-    return WEATHER_ICON_NONE;
-  }
-  filename_start++; // Move past the '/'
+  // Get position of filename in URL
+  const char *filename = strrchr(icon_url, '/');
 
-  // 2. Find the '?' (start of query) or end of string
-  const char *query_start = strchr(filename_start, '?');
-  size_t label_len;
-
-  if (query_start != NULL) {
-    // '?' was found, length is the difference
-    label_len = query_start - filename_start;
-  } else {
-    // '?' not found, length is to the end of the string
-    label_len = strlen(filename_start);
-  }
-
-  if (label_len == 0) {
-    ESP_LOGE(TAG, "Extracted empty label from icon URL: %s", icon_url);
+  if (filename == NULL) {
+    ESP_LOGE(TAG, "No filename found in icon URL");
     return WEATHER_ICON_NONE;
   }
 
-  // 3. Copy the extracted label to a local, null-terminated buffer
-  // Max expected label is "tropical_storm" (16 chars). 32 is a safe buffer.
-  if (label_len >= 32) {
-    ESP_LOGE(TAG, "Extracted label too long: %s", filename_start);
-    return WEATHER_ICON_NONE;
-  }
+  // Skip the slash
+  filename++;
 
-  static char extracted_label[32];
-  strncpy(extracted_label, filename_start, label_len);
-  extracted_label[label_len] = '\0'; // Ensure null-termination
-
-  // 4. Iterate the mapping table for an exact match
   weather_icon_mapping_t *cur_icon = icon_mapping;
   for (; cur_icon->label != NULL; cur_icon++) {
-    if (strcmp(cur_icon->label, extracted_label) == 0) {
+    if (strncmp(cur_icon->label, filename, strlen(cur_icon->label)) == 0) {
       return day_icon ? cur_icon->icon_day : cur_icon->icon_night;
     }
   }
 
-  ESP_LOGE(TAG, "No weather icon mapping for: %s (from URL: %s)",
-           extracted_label, icon_url);
+  ESP_LOGE(TAG, "No weather icon for: %s", filename);
   return WEATHER_ICON_NONE;
 }
 
