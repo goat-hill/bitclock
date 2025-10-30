@@ -11,7 +11,7 @@ static lv_obj_t *passkey_sublabel;
 void lv_helper_passkey_create() {
   passkey_label = lv_label_create(lv_screen_active());
 
-  lv_obj_add_style(passkey_label, &large_number_style, LV_PART_MAIN);
+  lv_obj_add_style(passkey_label, &medium_number_style, LV_PART_MAIN);
   lv_obj_align(passkey_label, LV_ALIGN_CENTER, 0, 0);
 
   passkey_sublabel = lv_label_create(lv_screen_active());
