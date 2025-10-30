@@ -9,8 +9,6 @@
 #include "views/passkey.h"
 #include "views/weather.h"
 
-static const char *TAG = "lv_helper";
-
 view_mode_t active_view_mode = VIEW_MODE_NONE;
 
 uint32_t lv_tick_cb() { return esp_timer_get_time() / 1000; }

@@ -50,7 +50,8 @@ spi_device_handle_t spi;
 #define BUFFER_PIXEL_COUNT (40 * DISPLAY_WIDTH)
 
 static lv_display_t *display;
-static uint8_t lvgl_pixel_buffer[BUFFER_PIXEL_COUNT];
+static uint8_t lvgl_pixel_buffer[BUFFER_PIXEL_COUNT]
+    __attribute__((aligned(LV_DRAW_BUF_ALIGN)));
 
 static const uint8_t kDispAddrInputTemp = 0xe5;
 static const uint8_t kDispAddrActiveTemp = 0xe0;
