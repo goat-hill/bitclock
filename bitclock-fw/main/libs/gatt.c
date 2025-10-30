@@ -44,7 +44,7 @@ uint16_t gatt_svr_chr_wifi_val_handle;
 static const ble_uuid128_t gatt_svr_chr_firmware_version_uuid =
     BLE_UUID128_INIT(0x92, 0x35, 0x61, 0x68, 0x69, 0x7c, 0xc5, 0x9c, 0xe0, 0x4f,
                      0x27, 0x75, 0x56, 0xbf, 0x68, 0xd5);
-static const char *gatt_svr_chr_firmware_version_val = "1.1.1";
+static const char *gatt_svr_chr_firmware_version_val = "1.1.2";
 uint16_t gatt_svr_chr_firmware_version_val_handle;
 
 // Wifi
