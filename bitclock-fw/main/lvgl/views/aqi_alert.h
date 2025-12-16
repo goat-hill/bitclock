@@ -4,6 +4,7 @@
 
 typedef struct {
   aqi_alert_reason_t alert_reason;
+  uint16_t co2_ppm;
 } lv_helper_aqi_alert_data_t;
 extern lv_helper_aqi_alert_data_t lv_helper_aqi_alert_data;
 

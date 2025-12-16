@@ -8,6 +8,7 @@ LV_IMAGE_DECLARE(material_mode_fan);
 
 lv_obj_t *fan_img;
 lv_obj_t *alert_label;
+lv_obj_t *co2_label;
 
 lv_helper_aqi_alert_data_t lv_helper_aqi_alert_data = {0};
 
@@ -29,6 +30,13 @@ void lv_helper_aqi_alert_create(bool align_right) {
   lv_obj_align(alert_label,
                align_right ? LV_ALIGN_TOP_RIGHT : LV_ALIGN_TOP_LEFT,
                36 * (align_right ? -1 : 1), 17);
+  
+  co2_label = lv_label_create(screen);
+  bool align_co2_right = !align_right;
+  lv_obj_add_style(co2_label, &sublabel_style, LV_PART_MAIN);
+  lv_obj_align(co2_label,
+                LV_ALIGN_TOP_MID,
+                0, 17);
 }
 
 void lv_helper_aqi_alert_update(lv_helper_aqi_alert_data_t *data) {
@@ -60,7 +68,14 @@ void lv_helper_aqi_alert_update(lv_helper_aqi_alert_data_t *data) {
     label_str = "";
     break;
   }
+
   set_text_if_changed(alert_label, label_str);
+
+  // Round to down to nearest 50 ppm
+  uint16_t rounded_co2 = data->co2_ppm / 50 * 50;
+  static char co2_str[12];
+  snprintf(co2_str, sizeof(co2_str), "%" PRIu16 " PPM", rounded_co2);
+  set_text_if_changed(co2_label, co2_str);
 
   void *image_src = NULL;
   if (data->alert_reason != AQI_ALERT_NONE) {

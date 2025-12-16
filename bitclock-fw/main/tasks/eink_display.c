@@ -527,6 +527,7 @@ void eink_task_run(void *pvParameters) {
     static bool demo_mode = false;
     if (!demo_mode) {
       lv_helper_aqi_alert_data.alert_reason = aqi_alerts_check(&aqi_data);
+      lv_helper_aqi_alert_data.co2_ppm = aqi_data.co2_ppm;
     } else {
       // Conference display mode
       // If it is 0-5 seconds within the minute, or 30-35 seconds within the

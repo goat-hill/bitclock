@@ -34,7 +34,7 @@ aqi_alert_reason_t aqi_alerts_check(aqi_data_t *aqi_data) {
   if (aqi_data->voc_index >= 250) {
     return AQI_ALERT_VOC_HIGH;
   }
-  if (aqi_data->co2_ppm >= 700) {
+  if (aqi_data->co2_ppm >= 800) {
     return AQI_ALERT_CO2_HIGH;
   }
 
