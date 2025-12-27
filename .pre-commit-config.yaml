@@ -20,7 +20,7 @@ repos:
         name: eslint
         entry: bash -c 'cd bitclock-web/ && npx eslint --fix .'
         language: system
-        types_or: [ts, tsx]
+        types_or: [javascript, ts, tsx]
         pass_filenames: false
 -   repo: local
     hooks:
@@ -28,7 +28,7 @@ repos:
         name: prettier
         entry: bash -c 'cd bitclock-web/ && npx prettier --write --check .'
         language: system
-        types_or: [ts, tsx]
+        types_or: [javascript, ts, tsx]
         pass_filenames: false
 -   repo: local
     hooks:
