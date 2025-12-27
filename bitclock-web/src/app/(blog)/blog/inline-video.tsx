@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Flex, Text, rem } from "@mantine/core";
+import { Box, Flex, Text } from "@mantine/core";
 
 interface InlineVideoProps {
   src: string;

@@ -1,6 +1,4 @@
 import PcbImage from "@/app/img/pcb.jpg";
-import BitclockBlackImage from "@/app/img/bitclock-black.jpg";
-import BitclockWhiteImage from "@/app/img/bitclock-white.jpg";
 import { StaticImageData } from "next/image";
 
 type ProductInfo = {

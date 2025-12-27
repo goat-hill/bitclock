@@ -36,7 +36,7 @@ export default function ClockBlock({
     if (!bluetoothConnection?.service) {
       return;
     }
-    let chr = await bluetoothConnection.service.getCharacteristic(
+    const chr = await bluetoothConnection.service.getCharacteristic(
       gatt.CHR_CLOCK_FORMAT_UUID,
     );
     const sizeBuffer = new ArrayBuffer(1);
@@ -58,13 +58,13 @@ export default function ClockBlock({
             if (tzindex == null) {
               return;
             }
-            let idx = parseInt(tzindex);
-            let posixTimezone = tzmap[idx][1];
+            const idx = parseInt(tzindex);
+            const posixTimezone = tzmap[idx][1];
             setTimezone(tzindex);
             await sendPosixTimezone(posixTimezone);
           }}
           searchable
-          data={tzmap.map(([label, value], index) => ({
+          data={tzmap.map(([label], index) => ({
             label: label,
             value: index.toString(),
           }))}
@@ -76,7 +76,7 @@ export default function ClockBlock({
         mt="md"
         value={clockFormat.toString()}
         onChange={async (valueString) => {
-          let value = parseInt(valueString);
+          const value = parseInt(valueString);
           await sendClockFormat(value);
           setClockFormat(value);
         }}

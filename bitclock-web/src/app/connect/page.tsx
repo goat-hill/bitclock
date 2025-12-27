@@ -30,6 +30,9 @@ type GattAttributeParser<T> = {
   setter: (value: T) => void;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GattValue = any;
+
 export default function Home() {
   const [bluetoothConnection, setBluetoothConnection] =
     useState<BluetoothConnection | null>(null);
@@ -49,9 +52,9 @@ export default function Home() {
   const decoder = new TextDecoder();
 
   const timezoneDecoder = (value: DataView): string | null => {
-    let posixTimezone = decoder.decode(value);
-    let matchedTzIndex = tzmap.findIndex(
-      ([label, posix]) => posix == posixTimezone,
+    const posixTimezone = decoder.decode(value);
+    const matchedTzIndex = tzmap.findIndex(
+      ([, posix]) => posix == posixTimezone,
     );
     if (matchedTzIndex >= 0) {
       return matchedTzIndex.toString();
@@ -59,7 +62,7 @@ export default function Home() {
     return null;
   };
 
-  const attributeReadOnce: GattAttributeParser<any>[] = [
+  const attributeReadOnce: GattAttributeParser<GattValue>[] = [
     {
       attributeId: gatt.CHR_TEMPERATURE_UNIT_UUID,
       parse: (value: DataView) => value.getUint8(0),
@@ -91,7 +94,7 @@ export default function Home() {
       setter: setFirmwareVersion,
     },
   ];
-  const attributeObservers: GattAttributeParser<any>[] = [
+  const attributeObservers: GattAttributeParser<GattValue>[] = [
     {
       attributeId: gatt.CHR_TEMPERATURE_UUID,
       parse: (value: DataView) => value.getFloat32(0, true),
@@ -145,15 +148,15 @@ export default function Home() {
 
     // You need to read at least one value before calling startNoficiations()
     // in order to transition to an authorized session.
-    for (let parser of [...attributeReadOnce, ...attributeObservers]) {
+    for (const parser of [...attributeReadOnce, ...attributeObservers]) {
       try {
-        let chr = await service.getCharacteristic(parser.attributeId);
-        let val = await chr.readValue();
+        const chr = await service.getCharacteristic(parser.attributeId);
+        const val = await chr.readValue();
         if (val != undefined) {
           parser.setter(parser.parse(val));
         }
       } catch (err) {
-        let attrIdStr =
+        const attrIdStr =
           typeof parser.attributeId === "number"
             ? parser.attributeId.toString(16)
             : parser.attributeId;
@@ -161,21 +164,21 @@ export default function Home() {
       }
     }
 
-    for (let parser of attributeObservers) {
+    for (const parser of attributeObservers) {
       try {
-        let chr = await service.getCharacteristic(parser.attributeId);
+        const chr = await service.getCharacteristic(parser.attributeId);
         (await chr.startNotifications()).addEventListener(
           "characteristicvaluechanged",
           (event) => {
-            let target = event.target as BluetoothRemoteGATTCharacteristic;
-            let val = target?.value;
+            const target = event.target as BluetoothRemoteGATTCharacteristic;
+            const val = target?.value;
             if (val != undefined) {
               parser.setter(parser.parse(val));
             }
           },
         );
       } catch (err) {
-        let attrIdStr =
+        const attrIdStr =
           typeof parser.attributeId === "number"
             ? parser.attributeId.toString(16)
             : parser.attributeId;

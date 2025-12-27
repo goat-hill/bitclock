@@ -8,6 +8,7 @@ import Link from "next/link";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
+    ...components,
     h1: (props) => <Title order={1}>{props.children}</Title>,
     h2: (props) => (
       <Title order={2} mt={rem(55)}>

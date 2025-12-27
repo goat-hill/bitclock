@@ -1,6 +1,5 @@
 import React from "react";
-import { Container, Title, Box, Text } from "@mantine/core";
-import Logo from "@/app/logo";
+import { Title } from "@mantine/core";
 
 export default function Privacy() {
   return (

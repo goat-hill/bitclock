@@ -22,9 +22,6 @@ interface FirmwareBlockProps {
   firmwareVersion: string | null;
 }
 
-const latestOfficialFirmwareVersion = "1.1.0";
-const firmwareVersionPath = "https://bitclock.io/firmware/latest-firmware.bin";
-
 export default function FirmwareBlock({
   bluetoothConnection,
   firmwareVersion,
@@ -49,10 +46,10 @@ export default function FirmwareBlock({
       return;
     }
 
-    let otaSizeCharacteristic = await btService.getCharacteristic(
+    const otaSizeCharacteristic = await btService.getCharacteristic(
       gatt.CHR_OTA_SIZE_UUID,
     );
-    let otaDataCharacteristic = await btService.getCharacteristic(
+    const otaDataCharacteristic = await btService.getCharacteristic(
       gatt.CHR_OTA_DATA_UUID,
     );
 

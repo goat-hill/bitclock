@@ -1,33 +1,33 @@
-let SERVICE_UUID = "ec2f3aa0-4ed8-71bd-f147-b2bc37195232";
+const SERVICE_UUID = "ec2f3aa0-4ed8-71bd-f147-b2bc37195232";
 
-let CHR_WIFI_UUID = "a5313036-a66e-e990-2147-49a7b1557044";
-let CHR_WIFI_STATUS_UUID = "32f4b3c3-d9b2-4d26-8da6-c9e88711b65d";
-let CHR_FW_VERSION_UUID = "d568bf56-7527-4fe0-9cc5-7c6968613592"; // v1.1.0
+const CHR_WIFI_UUID = "a5313036-a66e-e990-2147-49a7b1557044";
+const CHR_WIFI_STATUS_UUID = "32f4b3c3-d9b2-4d26-8da6-c9e88711b65d";
+const CHR_FW_VERSION_UUID = "d568bf56-7527-4fe0-9cc5-7c6968613592"; // v1.1.0
 
-let CHR_OTA_SIZE_UUID = "c839db31-c8e7-4c59-938d-c4b46e7bc2a4";
-let CHR_OTA_DATA_UUID = "ed900bcc-2ed5-40b0-b33a-fe7483f254c7";
+const CHR_OTA_SIZE_UUID = "c839db31-c8e7-4c59-938d-c4b46e7bc2a4";
+const CHR_OTA_DATA_UUID = "ed900bcc-2ed5-40b0-b33a-fe7483f254c7";
 
-let CHR_WEATHER_PATH_UUID = "32efee1d-9566-47e2-b880-0026d48c1f81";
+const CHR_WEATHER_PATH_UUID = "32efee1d-9566-47e2-b880-0026d48c1f81";
 
-let CHR_TEMPERATURE_UUID = 0x2a6e;
-let CHR_HUMIDITY_UUID = 0x2a6f;
-let CHR_CO2_UUID = 0x2b8c;
-let CHR_VOC_INDEX_UUID = 0x2be7;
-let CHR_NOX_INDEX_UUID = 0x2bd2;
-let CHR_TEMPERATURE_UNIT_UUID = 0x2a1d;
+const CHR_TEMPERATURE_UUID = 0x2a6e;
+const CHR_HUMIDITY_UUID = 0x2a6f;
+const CHR_CO2_UUID = 0x2b8c;
+const CHR_VOC_INDEX_UUID = 0x2be7;
+const CHR_NOX_INDEX_UUID = 0x2bd2;
+const CHR_TEMPERATURE_UNIT_UUID = 0x2a1d;
 
-let CHR_TIMEZONE_UUID = 0x2a0e;
-let CHR_CLOCK_FORMAT_UUID = "8323a538-871d-4465-a0e5-2a8759c445d6";
+const CHR_TIMEZONE_UUID = 0x2a0e;
+const CHR_CLOCK_FORMAT_UUID = "8323a538-871d-4465-a0e5-2a8759c445d6";
 
-let TEMP_UNIT_VAL_CELSIUS = 1;
-let TEMP_UNIT_VAL_FAHRENHEIT = 2;
+const TEMP_UNIT_VAL_CELSIUS = 1;
+const TEMP_UNIT_VAL_FAHRENHEIT = 2;
 
-let CLOCK_FORMAT_VAL_12HR = 1;
-let CLOCK_FORMAT_VAL_24HR = 2;
+const CLOCK_FORMAT_VAL_12HR = 1;
+const CLOCK_FORMAT_VAL_24HR = 2;
 
-let CHR_APP_SELECTION_UUID = "3504c5e2-0aee-43eb-9aa2-f77346e249ea";
-let APP_SELECTION_VAL_CLOCK = 1;
-let APP_SELECTION_VAL_WEATHER = 2;
+const CHR_APP_SELECTION_UUID = "3504c5e2-0aee-43eb-9aa2-f77346e249ea";
+const APP_SELECTION_VAL_CLOCK = 1;
+const APP_SELECTION_VAL_WEATHER = 2;
 
 // let CHR_DEVICE_NAME_UUID = 0x2a00;
 // let CHR_FW_REV_UUID = 0x2a26;
@@ -38,11 +38,11 @@ type WifiStatus = {
   isStarted: boolean;
   isConnected: boolean;
 };
-let WIFI_IS_STARTED_VAL_BIT = 1;
-let WIFI_IS_CONNECTED_VAL_BIT = 1 << 1;
+const WIFI_IS_STARTED_VAL_BIT = 1;
+const WIFI_IS_CONNECTED_VAL_BIT = 1 << 1;
 
 const parseWifiStatus = (value: DataView): WifiStatus => {
-  let status = value.getUint8(0);
+  const status = value.getUint8(0);
   return {
     isStarted: (status & WIFI_IS_STARTED_VAL_BIT) !== 0,
     isConnected: (status & WIFI_IS_CONNECTED_VAL_BIT) !== 0,

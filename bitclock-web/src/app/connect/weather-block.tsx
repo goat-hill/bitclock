@@ -50,7 +50,7 @@ export default function WeatherBlock({
     }
 
     const forecastUrl = await getNoaaForecastUrl(lat.trim(), lng.trim());
-    let chr = await bluetoothConnection.service.getCharacteristic(
+    const chr = await bluetoothConnection.service.getCharacteristic(
       gatt.CHR_WEATHER_PATH_UUID,
     );
     // Trim everything except the url path, using library functions but keep preceding slash

@@ -53,7 +53,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let currentDate = new Date();
+  const currentDate = new Date();
   return (
     <html lang="en" className={`${overpass.variable}`}>
       <head>

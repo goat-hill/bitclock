@@ -19,7 +19,7 @@ export default function ClimateBlock({
     if (!bluetoothConnection?.service) {
       return;
     }
-    let chr = await bluetoothConnection.service.getCharacteristic(
+    const chr = await bluetoothConnection.service.getCharacteristic(
       gatt.CHR_TEMPERATURE_UNIT_UUID,
     );
     const sizeBuffer = new ArrayBuffer(1);
@@ -37,7 +37,7 @@ export default function ClimateBlock({
         value={temperatureUnit.toString()}
         mt="sm"
         onChange={async (valueString) => {
-          let value = parseInt(valueString);
+          const value = parseInt(valueString);
           await sendTemperatureUnit(value);
           setTemperatureUnit(value);
         }}

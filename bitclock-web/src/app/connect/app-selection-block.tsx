@@ -19,7 +19,7 @@ export default function AppSelectionBlock({
     if (!bluetoothConnection?.service) {
       return;
     }
-    let chr = await bluetoothConnection.service.getCharacteristic(
+    const chr = await bluetoothConnection.service.getCharacteristic(
       gatt.CHR_APP_SELECTION_UUID,
     );
     const sizeBuffer = new ArrayBuffer(1);
@@ -36,7 +36,7 @@ export default function AppSelectionBlock({
         mt="md"
         value={appSelection.toString()}
         onChange={async (valueString) => {
-          let value = parseInt(valueString);
+          const value = parseInt(valueString);
           await sendAppSelection(value);
           setAppSelection(value);
         }}

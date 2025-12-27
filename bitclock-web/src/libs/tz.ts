@@ -1,4 +1,4 @@
-let tzmap: [string, string][] = [
+const tzmap: [string, string][] = [
   ["Africa/Abidjan", "GMT0"],
   ["Africa/Accra", "GMT0"],
   ["Africa/Addis_Ababa", "EAT-3"],

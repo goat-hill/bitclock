@@ -4,7 +4,7 @@ import { Title, Card, SimpleGrid, Text } from "@mantine/core";
 import * as gatt from "@/libs/gatt";
 
 function roundToPlace(input: number, place: number): string {
-  let multiple = 10 ** place;
+  const multiple = 10 ** place;
   return (Math.round(input * multiple) / multiple).toFixed(place);
 }
 

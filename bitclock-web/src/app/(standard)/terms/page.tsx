@@ -1,6 +1,5 @@
 import React from "react";
-import { Box, Container, Title, Anchor } from "@mantine/core";
-import Logo from "../../logo";
+import { Title, Anchor } from "@mantine/core";
 import Link from "next/link";
 
 export default function Terms() {
