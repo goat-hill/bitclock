@@ -229,7 +229,7 @@ void disp_task_run(void *pvParameters) {
 
   lv_helper_styles_init();
 
-  lv_helper_set_view_mode(VIEW_MODE_AQI_GRID);
+  lv_helper_set_view_mode(VIEW_MODE_AQI);
 
   while (1) {
     lv_helper_view_mode_aqi_data.temp_celsius = sht4x_current_temp_celsius();

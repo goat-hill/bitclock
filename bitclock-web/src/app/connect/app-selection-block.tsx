@@ -50,6 +50,10 @@ export default function AppSelectionBlock({
             value={gatt.APP_SELECTION_VAL_WEATHER.toString()}
             label="Daily weather forecast"
           />
+          <Radio
+            value={gatt.APP_SELECTION_VAL_AQI.toString()}
+            label="Air quality"
+          />
         </Group>
       </Radio.Group>
     </>

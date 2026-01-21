@@ -51,13 +51,12 @@ void lv_helper_aqi_grid_create() {
   init_grid_layout(screen);
 
   // Create labels and value labels for each parameter
-  create_label(screen, "Temp", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 0);
-  create_label(screen, "Humidity", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
+  create_label(screen, "TEMP", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 0);
+  create_label(screen, "HUMIDITY", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
                1);
-  create_label(screen, "CO₂ ppm", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
+  create_label(screen, "CO₂ PPM", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
                2);
-  create_label(screen, "VOC index", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0,
-               3);
+  create_label(screen, "VOC", LV_TEXT_ALIGN_LEFT, LV_GRID_ALIGN_START, 0, 3);
 
   temperature_label =
       create_label(screen, "", LV_TEXT_ALIGN_RIGHT, LV_GRID_ALIGN_END, 1, 0);
