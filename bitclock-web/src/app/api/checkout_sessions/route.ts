@@ -2,6 +2,9 @@ import Stripe from "stripe";
 import products from "@/app/(standard)/order/products";
 import { NextRequest } from "next/server";
 
+// Set to false to re-enable sales.
+const SALES_DISABLED = true;
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 type ApiError = {
@@ -58,6 +61,10 @@ export async function GET(req: NextRequest): Promise<Response> {
 async function postImpl(
   req: NextRequest,
 ): Promise<[CheckoutSessionPostResponse, ResponseInit]> {
+  if (SALES_DISABLED) {
+    return [{ error: "Out of stock" }, { status: 410 }];
+  }
+
   const { productId } = await req.json();
   const selectedProduct = products.find((product) => product.id == productId);
 
