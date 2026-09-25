@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Button, Center } from "@mantine/core";
-import Link from "next/link";
+import Link from "@/libs/client-link";
 
 export default function GetBitclock() {
   return (

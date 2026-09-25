@@ -10,7 +10,7 @@ import {
   Anchor,
   Text,
 } from "@mantine/core";
-import Link from "next/link";
+import Link from "@/libs/client-link";
 import type { Metadata } from "next";
 import { Overpass } from "next/font/google";
 

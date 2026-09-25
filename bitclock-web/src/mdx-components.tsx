@@ -4,7 +4,7 @@ import "@mantine/code-highlight/styles.css";
 import type { MDXComponents } from "mdx/types";
 import { CodeHighlight } from "@mantine/code-highlight";
 import { Anchor, Title, Code, rem } from "@mantine/core";
-import Link from "next/link";
+import Link from "@/libs/client-link";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
