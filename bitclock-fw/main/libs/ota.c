@@ -123,8 +123,10 @@ esp_err_t bitclock_ota_on_boot() {
 
   const esp_partition_t *running = esp_ota_get_running_partition();
   esp_ota_img_states_t ota_state;
-  err = esp_ota_get_state_partition(running, &ota_state);
-  if (err == ESP_OK) {
+  // Not an error if there's no OTA state, e.g. running from a factory partition
+  // or freshly flashed with blank otadata.
+  err = ESP_OK;
+  if (esp_ota_get_state_partition(running, &ota_state) == ESP_OK) {
     if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
       // TODO: Communicate with sensors or some sort of health check?
       bool diagnostic_is_ok = true;

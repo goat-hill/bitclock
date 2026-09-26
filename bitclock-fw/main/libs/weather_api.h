@@ -22,8 +22,8 @@ typedef enum {
 
 typedef struct {
   time_t requested_at;
-  uint16_t temp_min;
-  uint16_t temp_max;
+  int16_t temp_min;
+  int16_t temp_max;
   bool temp_celsius;
   weather_icon_t icon;
 } wifi_weather_t;

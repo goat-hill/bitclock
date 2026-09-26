@@ -104,7 +104,7 @@ esp_err_t scd4x_read() {
                              1000                   // xfer_timeout_ms
     );
     if (ret != ESP_OK) {
-      ESP_LOGE(TAG, "Failed to read from sht4x: %d", ret);
+      ESP_LOGE(TAG, "Failed to read from scd4x: %d", ret);
     }
 
     if (sensirion_crc(kReadResponse) == kReadResponse[2]) {
