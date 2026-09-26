@@ -97,7 +97,11 @@ bitclock_nvs_set_temp_unit(bitclock_nvs_temp_unit_val_t new_temp_unit) {
   }
 
   err = nvs_set_u8(handle, NVS_ID_TEMP_UNIT, new_temp_unit);
+  if (err == ESP_OK) {
+    err = nvs_commit(handle);
+  }
   if (err != ESP_OK) {
+    nvs_close(handle);
     return err;
   }
   temp_unit = new_temp_unit;
@@ -119,7 +123,11 @@ esp_err_t bitclock_nvs_set_tz(const char *tz, size_t size) {
   }
 
   err = nvs_set_blob(handle, NVS_ID_TIMEZONE, tz, size);
+  if (err == ESP_OK) {
+    err = nvs_commit(handle);
+  }
   if (err != ESP_OK) {
+    nvs_close(handle);
     return err;
   }
   // FIXME: Free the old string? Malloc for the new one?
@@ -142,7 +150,11 @@ esp_err_t bitclock_nvs_set_weather_path(const char *weather_path, size_t size) {
   }
 
   err = nvs_set_blob(handle, NVS_ID_WEATHER_PATH, weather_path, size);
+  if (err == ESP_OK) {
+    err = nvs_commit(handle);
+  }
   if (err != ESP_OK) {
+    nvs_close(handle);
     return err;
   }
   // FIXME: Free the old string? Malloc for the new one?
@@ -168,7 +180,11 @@ esp_err_t bitclock_nvs_set_clock_format(
   }
 
   err = nvs_set_u8(handle, NVS_ID_CLOCK_FORMAT, new_clock_format);
+  if (err == ESP_OK) {
+    err = nvs_commit(handle);
+  }
   if (err != ESP_OK) {
+    nvs_close(handle);
     return err;
   }
   clock_format = new_clock_format;
@@ -193,7 +209,11 @@ esp_err_t bitclock_nvs_set_app_selection(
   }
 
   err = nvs_set_u8(handle, NVS_ID_APP_SELECTION, new_app_selection);
+  if (err == ESP_OK) {
+    err = nvs_commit(handle);
+  }
   if (err != ESP_OK) {
+    nvs_close(handle);
     return err;
   }
   app_selection = new_app_selection;

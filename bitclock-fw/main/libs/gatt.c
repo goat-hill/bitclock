@@ -513,15 +513,14 @@ static int gatt_svc_access(uint16_t conn_handle, uint16_t attr_handle,
     } else if (attr_handle == gatt_svr_chr_wifi_val_handle) {
       rc = gatt_svr_write(ctxt->om,                      // data
                           1,                             // min length
-                          sizeof(gatt_svr_chr_wifi_val), // max length
-                          &gatt_svr_chr_wifi_val,        // dest
-                          &copy_len                      // length dest
+                          sizeof(gatt_svr_chr_wifi_val) -
+                              1, // max length - 1 for null terminator
+                          &gatt_svr_chr_wifi_val, // dest
+                          &copy_len               // length dest
       );
       if (rc == 0) {
         // Bluetooth doesn't add ending \0
-        if (copy_len < sizeof(gatt_svr_chr_wifi_val)) {
-          gatt_svr_chr_wifi_val[copy_len] = 0;
-        }
+        gatt_svr_chr_wifi_val[copy_len] = 0;
         enqueue_wifi_creds_update();
         ble_gatts_chr_updated(attr_handle);
       }

@@ -43,7 +43,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     default:
       break;
     }
-  } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+  } else if (event_base == IP_EVENT) {
     switch (event_id) {
     case IP_EVENT_STA_GOT_IP:
       ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
@@ -75,6 +75,8 @@ static void wifi_init() {
   ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID,
                                              &event_handler, NULL));
   ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP,
+                                             &event_handler, NULL));
+  ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_LOST_IP,
                                              &event_handler, NULL));
 
   // Initialize wifi
@@ -133,8 +135,7 @@ void wifi_task_run(void *pvParameters) {
               sizeof(new_cfg.sta.ssid));
       strncpy((char *)new_cfg.sta.password, wifiCreds.password,
               sizeof(new_cfg.sta.password));
-      ESP_LOGI(TAG, "New wifi creds %s:%s", new_cfg.sta.ssid,
-               new_cfg.sta.password);
+      ESP_LOGI(TAG, "New wifi creds for SSID %.32s", new_cfg.sta.ssid);
       ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &new_cfg));
     }
 

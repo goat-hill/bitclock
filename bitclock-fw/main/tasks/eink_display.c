@@ -308,7 +308,7 @@ static void eink_send_config(bool fast_update) {
     vTaskDelay(pdMS_TO_TICKS(50));
   }
   float temp = sht4x_current_temp_celsius();
-  uint8_t temperature_data[1] = {(uint8_t)(temp >= 0 ? temp : 0xff - temp + 1)};
+  uint8_t temperature_data[1] = {(uint8_t)(int8_t)temp};
   ESP_LOGD(TAG, "config temp: %f %u 0x%02x", temp, temperature_data[0],
            temperature_data[0]);
   if (fast_update) {

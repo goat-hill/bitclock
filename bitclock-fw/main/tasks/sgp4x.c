@@ -189,8 +189,8 @@ void sgp4x_task_run(void *pvParameters) {
     if (sht4x_current_temp_available()) {
       float s_temperature = sht4x_current_temp_celsius();
       float s_rh = sht4x_current_relative_humidity();
-      compensation_t = (uint16_t)(s_temperature + 45) * 65535 / 175;
-      compensation_rh = (uint16_t)s_rh * 65535 / 100;
+      compensation_t = (uint16_t)((s_temperature + 45) * 65535 / 175);
+      compensation_rh = (uint16_t)(s_rh * 65535 / 100);
     }
 
     // 3. Measure SGP4x signals

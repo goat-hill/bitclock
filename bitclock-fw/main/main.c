@@ -36,7 +36,7 @@ void app_main(void) {
     /* NVS partition was truncated
      * and needs to be erased */
     ESP_ERROR_CHECK(nvs_flash_erase());
-    ESP_ERROR_CHECK(nvs_flash_init());
+    ret = nvs_flash_init();
   }
   ESP_ERROR_CHECK(ret);
   ESP_ERROR_CHECK(bitclock_nvs_init());
@@ -101,7 +101,7 @@ void app_main(void) {
 #endif
 
 #ifdef SGP4X_TASK_ENABLED
-  sgp4xTask = xTaskCreateStatic(sgp4x_task_run, "scd4x",
+  sgp4xTask = xTaskCreateStatic(sgp4x_task_run, "sgp4x",
                                 SGP4X_STACK_SIZE,    // ulStackDepth
                                 (void *)1,           // pvParamters
                                 SGP4X_TASK_PRIORITY, // uxPriority
