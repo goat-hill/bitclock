@@ -69,8 +69,19 @@ export default function RootLayout({
         <MantineProvider theme={theme}>
           {children}
           <Text ta="center" my="xl">
-            © {currentDate.getFullYear()} Goat Hill Electronics LLC. All rights
-            reserved.&nbsp;
+            {/* The company name links to goat-hill.com (same tab, followed) to
+                tie Bitclock to its maker for search; it looks like the text
+                around it until hovered. */}
+            © {currentDate.getFullYear()}{" "}
+            <Anchor
+              href="https://goat-hill.com/"
+              inherit
+              c="inherit"
+              underline="hover"
+            >
+              Goat Hill Electronics LLC
+            </Anchor>
+            . All rights reserved.&nbsp;
             <Anchor component={Link} href="/privacy">
               Privacy Policy
             </Anchor>
